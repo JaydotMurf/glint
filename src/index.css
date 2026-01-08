@@ -2,95 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Glint Design System - Calm, Clear, Fast */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Primary - Calm Blue */
+    --primary: 231 100% 68%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 231 85% 62%;
+    --primary-pressed: 231 75% 55%;
 
+    /* Accent - Soft Purple */
+    --accent: 270 30% 62%;
+    --accent-foreground: 0 0% 100%;
+    --accent-soft: 270 60% 93%;
+
+    /* Background & Surfaces */
+    --background: 220 20% 98%;
+    --foreground: 220 20% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 220 20% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 20% 16%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Muted & Secondary */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 20% 16%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Borders & Inputs */
+    --border: 220 13% 91%;
+    --border-medium: 220 13% 84%;
+    --input: 220 13% 91%;
+    --ring: 231 100% 68%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Semantic Colors */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --success-soft: 160 60% 95%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Special Surfaces */
+    --flashcard: 36 100% 97%;
+    --flashcard-foreground: 220 20% 16%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Radius */
+    --radius: 0.75rem;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
+    /* Sidebar (keeping defaults) */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 231 100% 68%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --primary: 231 100% 72%;
+    --primary-foreground: 220 20% 10%;
+    --primary-hover: 231 90% 78%;
+    --primary-pressed: 231 85% 65%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --accent: 270 40% 70%;
+    --accent-foreground: 220 20% 10%;
+    --accent-soft: 270 30% 20%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --background: 220 20% 10%;
+    --foreground: 220 14% 96%;
+    --card: 220 20% 13%;
+    --card-foreground: 220 14% 96%;
+    --popover: 220 20% 13%;
+    --popover-foreground: 220 14% 96%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 9% 60%;
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 220 14% 96%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --border: 220 20% 20%;
+    --border-medium: 220 20% 28%;
+    --input: 220 20% 20%;
+    --ring: 231 100% 72%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --success: 160 60% 45%;
+    --success-soft: 160 40% 15%;
+    --warning: 38 80% 55%;
+    --destructive: 0 70% 50%;
+    --info: 217 80% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --flashcard: 220 20% 15%;
+    --flashcard-foreground: 220 14% 96%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 20% 10%;
+    --sidebar-foreground: 220 14% 96%;
+    --sidebar-primary: 231 100% 72%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 20% 18%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 20% 20%;
+    --sidebar-ring: 231 100% 72%;
   }
 }
 
@@ -100,6 +119,124 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Glint Input - Large, centered, calm */
+  .glint-input {
+    @apply w-full px-6 py-5 text-lg bg-card border-2 border-border rounded-2xl
+           transition-all duration-200 ease-out
+           placeholder:text-muted-foreground/60
+           focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10
+           hover:border-border-medium;
+  }
+
+  /* Primary CTA Button */
+  .glint-button-primary {
+    @apply px-8 py-4 text-base font-semibold text-primary-foreground bg-primary
+           rounded-xl transition-all duration-200 ease-out
+           hover:bg-[hsl(var(--primary-hover))] hover:shadow-lg hover:shadow-primary/20
+           active:bg-[hsl(var(--primary-pressed))] active:scale-[0.98]
+           focus:outline-none focus:ring-4 focus:ring-primary/20
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary Button */
+  .glint-button-secondary {
+    @apply px-6 py-3 text-base font-medium text-foreground bg-card
+           border-2 border-border rounded-xl transition-all duration-200 ease-out
+           hover:bg-muted hover:border-border-medium
+           active:scale-[0.98]
+           focus:outline-none focus:ring-4 focus:ring-primary/10;
+  }
+
+  /* Ghost Button */
+  .glint-button-ghost {
+    @apply px-4 py-2 text-sm font-medium text-muted-foreground
+           rounded-lg transition-all duration-200 ease-out
+           hover:text-foreground hover:bg-muted
+           active:scale-[0.98];
+  }
+
+  /* Success Button (Got it) */
+  .glint-button-success {
+    @apply px-6 py-3 text-base font-semibold text-success-foreground bg-success
+           rounded-xl transition-all duration-200 ease-out
+           hover:opacity-90 hover:shadow-lg hover:shadow-success/20
+           active:scale-[0.98];
+  }
+
+  /* Card Component */
+  .glint-card {
+    @apply bg-card rounded-2xl border border-border p-6
+           shadow-sm transition-all duration-200
+           hover:shadow-md hover:border-border-medium;
+  }
+
+  /* Flashcard */
+  .glint-flashcard {
+    @apply bg-flashcard rounded-3xl p-8 min-h-[300px]
+           shadow-lg border border-border
+           flex items-center justify-center text-center
+           transition-all duration-300 ease-out;
+  }
+
+  /* Tab Button */
+  .glint-tab {
+    @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
+           text-muted-foreground hover:text-foreground hover:bg-muted;
+  }
+
+  .glint-tab-active {
+    @apply bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground;
+  }
+
+  /* Progress Bar */
+  .glint-progress {
+    @apply h-1.5 bg-muted rounded-full overflow-hidden;
+  }
+
+  .glint-progress-bar {
+    @apply h-full bg-primary rounded-full transition-all duration-300 ease-out;
+  }
+
+  /* Subtle link underline animation */
+  .glint-link {
+    @apply relative inline-block text-primary font-medium
+           after:content-[''] after:absolute after:w-full after:scale-x-0
+           after:h-0.5 after:bottom-0 after:left-0 after:bg-primary
+           after:origin-bottom-right after:transition-transform after:duration-200
+           hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Animation delays */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply animate-pulse bg-muted rounded;
   }
 }
