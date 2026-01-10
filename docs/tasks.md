@@ -24,28 +24,30 @@ The MVP UI shell is complete:
 
 ## Phase 1: Foundation (Lovable Cloud + Auth)
 
-### Task 1.1: Enable Lovable Cloud ⬜
+### Task 1.1: Enable Lovable Cloud ✅
 **Priority**: 🔴 Critical  
 **Dependencies**: None
+**Completed**: 2026-01-10
 
 **Subtasks**:
-- [ ] 1.1.1 Enable Lovable Cloud via tool
-- [ ] 1.1.2 Verify database connection
-- [ ] 1.1.3 Create initial tables (see Task 1.3)
+- [x] 1.1.1 Enable Lovable Cloud via tool
+- [x] 1.1.2 Verify database connection
+- [x] 1.1.3 Create initial tables (see Task 1.3)
 
 ---
 
-### Task 1.2: Implement Email/Password Authentication ⬜
+### Task 1.2: Implement Email/Password Authentication ✅
 **Priority**: 🔴 Critical  
 **Dependencies**: Task 1.1
+**Completed**: 2026-01-10
 
 **Subtasks**:
-- [ ] 1.2.1 Create `profiles` table for user data
-- [ ] 1.2.2 Create auth pages (Login, Signup)
-- [ ] 1.2.3 Implement auth context/hook
-- [ ] 1.2.4 Add protected route wrapper
-- [ ] 1.2.5 Add logout functionality
-- [ ] 1.2.6 Handle email confirmation flow
+- [x] 1.2.1 Create `profiles` table for user data
+- [x] 1.2.2 Create auth pages (Login, Signup)
+- [x] 1.2.3 Implement auth context/hook
+- [x] 1.2.4 Add protected route wrapper
+- [x] 1.2.5 Add logout functionality
+- [x] 1.2.6 Handle email confirmation flow (auto-confirm enabled)
 
 **Database Schema**:
 ```sql
@@ -184,15 +186,16 @@ export const useAuth = () => {
 
 ---
 
-### Task 1.3: Create Database Tables ⬜
+### Task 1.3: Create Database Tables ✅
 **Priority**: 🔴 Critical  
 **Dependencies**: Task 1.1
+**Completed**: 2026-01-10
 
 **Subtasks**:
-- [ ] 1.3.1 Create `saved_concepts` table
-- [ ] 1.3.2 Create `flashcards` table
-- [ ] 1.3.3 Set up RLS policies
-- [ ] 1.3.4 Create indexes for performance
+- [x] 1.3.1 Create `saved_concepts` table
+- [x] 1.3.2 Create `flashcards` table
+- [x] 1.3.3 Set up RLS policies
+- [x] 1.3.4 Create indexes for performance
 
 **Database Schema**:
 ```sql

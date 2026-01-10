@@ -14,7 +14,119 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      flashcards: {
+        Row: {
+          back_text: string
+          concept_id: string
+          created_at: string | null
+          front_text: string
+          id: string
+          last_reviewed_at: string | null
+          next_review_at: string | null
+          review_status: string | null
+          user_id: string
+        }
+        Insert: {
+          back_text: string
+          concept_id: string
+          created_at?: string | null
+          front_text: string
+          id?: string
+          last_reviewed_at?: string | null
+          next_review_at?: string | null
+          review_status?: string | null
+          user_id: string
+        }
+        Update: {
+          back_text?: string
+          concept_id?: string
+          created_at?: string | null
+          front_text?: string
+          id?: string
+          last_reviewed_at?: string | null
+          next_review_at?: string | null
+          review_status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcards_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "saved_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          daily_usage_count: number | null
+          display_name: string | null
+          email: string | null
+          id: string
+          last_usage_date: string | null
+          plan_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_usage_count?: number | null
+          display_name?: string | null
+          email?: string | null
+          id: string
+          last_usage_date?: string | null
+          plan_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_usage_count?: number | null
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          last_usage_date?: string | null
+          plan_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      saved_concepts: {
+        Row: {
+          created_at: string | null
+          explanation_deep: string | null
+          explanation_simplest: string | null
+          explanation_standard: string | null
+          id: string
+          input_text: string | null
+          topic: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          explanation_deep?: string | null
+          explanation_simplest?: string | null
+          explanation_standard?: string | null
+          id?: string
+          input_text?: string | null
+          topic: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          explanation_deep?: string | null
+          explanation_simplest?: string | null
+          explanation_standard?: string | null
+          id?: string
+          input_text?: string | null
+          topic?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
