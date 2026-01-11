@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HomeHeader } from "@/components/home/HomeHeader";
-import { ExamplePrompts } from "@/components/home/ExamplePrompts";
 import { RecentConcepts } from "@/components/home/RecentConcepts";
 import { AuthNudge } from "@/components/home/AuthNudge";
 import { GlintButton } from "@/components/ui/glint-button";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { UpgradeModal } from "@/components/UpgradeModal";
 import { useAppStore } from "@/store/appStore";
+import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { generateExplanation } from "@/lib/ai";
 import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -14,31 +15,39 @@ import { toast } from "sonner";
 const HomePage = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  
   const { 
     isGenerating, 
     setIsGenerating, 
-    setCurrentConcept, 
-    dailyExplanations,
-    isPremium,
-    incrementDailyExplanations
+    setCurrentConcept,
+    setSavedConceptId,
   } = useAppStore();
 
-  const FREE_LIMIT = 3;
-  const canGenerate = isPremium || dailyExplanations < FREE_LIMIT;
+  const { 
+    canGenerate, 
+    remainingUses, 
+    isPremium, 
+    incrementUsage,
+    FREE_DAILY_LIMIT,
+  } = useUsageLimit();
 
   const handleSubmit = async (topic: string) => {
     if (!topic.trim() || isGenerating) return;
 
     if (!canGenerate) {
-      navigate("/upgrade");
+      setShowUpgradeModal(true);
       return;
     }
 
     setIsGenerating(true);
+    // Reset saved concept ID for new generations
+    setSavedConceptId(null);
+    
     try {
       const concept = await generateExplanation(topic.trim());
       setCurrentConcept(concept);
-      incrementDailyExplanations();
+      await incrementUsage.mutateAsync();
       navigate("/results");
     } catch (error) {
       console.error("Failed to generate explanation:", error);
@@ -107,7 +116,7 @@ const HomePage = () => {
           {/* Usage counter for free tier */}
           {!isPremium && (
             <p className="text-center text-xs text-muted-foreground/70 mt-3">
-              {FREE_LIMIT - dailyExplanations} free explanations left today
+              {remainingUses} of {FREE_DAILY_LIMIT} free explanations left today
             </p>
           )}
         </div>
@@ -115,6 +124,12 @@ const HomePage = () => {
 
       {/* Recent Concepts Section */}
       <RecentConcepts />
+
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        open={showUpgradeModal} 
+        onOpenChange={setShowUpgradeModal} 
+      />
     </div>
   );
 };

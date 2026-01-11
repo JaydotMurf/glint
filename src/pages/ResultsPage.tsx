@@ -4,10 +4,13 @@ import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
 import { GlintTabs } from "@/components/ui/glint-tabs";
+import { UpgradeModal } from "@/components/UpgradeModal";
 import { useAppStore } from "@/store/appStore";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
+import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Bookmark, Plus, Check, Layers, Loader2 } from "lucide-react";
+import { ArrowLeft, Bookmark, Plus, Check, Layers, Loader2, Download, Lock } from "lucide-react";
+import { toast } from "sonner";
 
 type ExplanationLevel = "simplest" | "standard" | "deepDive";
 
@@ -22,7 +25,9 @@ const ResultsPage = () => {
   const { user } = useAuth();
   const { currentConcept, setCurrentConcept, savedConceptId, setSavedConceptId } = useAppStore();
   const { concepts, saveConcept } = useSavedConcepts();
+  const { isPremium } = useUsageLimit();
   const [activeLevel, setActiveLevel] = useState<ExplanationLevel>("standard");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   if (!currentConcept) {
     navigate("/");
@@ -57,6 +62,17 @@ const ResultsPage = () => {
 
   const handleGenerateFlashcards = () => {
     navigate("/flashcards");
+  };
+
+  const handleExportPDF = () => {
+    if (!isPremium) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    // TODO: Implement actual PDF export when premium is live
+    toast.info("PDF Export", {
+      description: "PDF export will be available soon!",
+    });
   };
 
   return (
@@ -166,6 +182,24 @@ const ResultsPage = () => {
             <GlintButton
               variant="secondary"
               size="lg"
+              className="flex-1"
+              onClick={handleExportPDF}
+            >
+              {isPremium ? (
+                <Download className="h-5 w-5" />
+              ) : (
+                <Lock className="h-5 w-5" />
+              )}
+              Export PDF
+            </GlintButton>
+          </div>
+
+          {/* New Topic Button */}
+          <div className="mt-4">
+            <GlintButton
+              variant="ghost"
+              size="lg"
+              className="w-full"
               onClick={() => {
                 setCurrentConcept(null);
                 setSavedConceptId(null);
@@ -178,6 +212,14 @@ const ResultsPage = () => {
           </div>
         </div>
       </main>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        open={showUpgradeModal} 
+        onOpenChange={setShowUpgradeModal}
+        title="Export to PDF is Premium"
+        description="Upgrade to download your explanations and flashcards as PDFs for offline study."
+      />
     </div>
   );
 };
