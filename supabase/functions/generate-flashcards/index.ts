@@ -5,13 +5,88 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+async function callAIWithRetry(apiKey: string, topic: string, explanation: string, retries = 2): Promise<Response> {
+  const models = ["google/gemini-2.5-flash", "openai/gpt-5-mini"];
+  
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const model = attempt === 0 ? models[0] : models[1]; // Try primary, then fallback
+    
+    try {
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { 
+              role: "system", 
+              content: `Based on the provided explanation, generate 3-5 flashcards that test understanding.
+Guidelines:
+- Ask "why" and "how" questions, not just "what"
+- Keep answers short (1-3 sentences)
+- Use simplified explanation tone
+- No jargon unless it was defined in the explanation` 
+            },
+            { role: "user", content: `Topic: ${topic}\n\nExplanation: ${explanation || topic}` }
+          ],
+          tools: [{
+            type: "function",
+            function: {
+              name: "create_flashcards",
+              description: "Create flashcards from the explanation",
+              parameters: {
+                type: "object",
+                properties: {
+                  flashcards: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        front: { type: "string", description: "Concept-checking question" },
+                        back: { type: "string", description: "Clear, simple answer" }
+                      },
+                      required: ["front", "back"]
+                    }
+                  }
+                },
+                required: ["flashcards"]
+              }
+            }
+          }],
+          tool_choice: { type: "function", function: { name: "create_flashcards" } }
+        }),
+      });
+
+      if (response.ok) {
+        return response;
+      }
+      
+      // If 502/503/504, retry with next model
+      if ([502, 503, 504].includes(response.status) && attempt < retries) {
+        console.log(`Model ${model} returned ${response.status}, trying fallback...`);
+        continue;
+      }
+      
+      return response; // Return the error response if not retryable
+    } catch (error) {
+      console.error(`Attempt ${attempt + 1} failed:`, error);
+      if (attempt === retries) throw error;
+    }
+  }
+  
+  throw new Error("All retry attempts failed");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { explanation, topic } = await req.json();
+    const { topic, explanation } = await req.json();
 
     if (!topic || typeof topic !== 'string') {
       return new Response(
@@ -25,53 +100,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { 
-            role: "system", 
-            content: `Based on the provided explanation, generate 3-5 flashcards that test understanding.
-Guidelines:
-- Ask "why" and "how" questions, not just "what"
-- Keep answers short (1-3 sentences)
-- Use simplified explanation tone
-- No jargon unless it was defined in the explanation` 
-          },
-          { role: "user", content: `Topic: ${topic}\n\nExplanation: ${explanation || topic}` }
-        ],
-        tools: [{
-          type: "function",
-          function: {
-            name: "create_flashcards",
-            description: "Create flashcards from the explanation",
-            parameters: {
-              type: "object",
-              properties: {
-                flashcards: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      front: { type: "string", description: "Concept-checking question" },
-                      back: { type: "string", description: "Clear, simple answer" }
-                    },
-                    required: ["front", "back"]
-                  }
-                }
-              },
-              required: ["flashcards"]
-            }
-          }
-        }],
-        tool_choice: { type: "function", function: { name: "create_flashcards" } }
-      }),
-    });
+    const response = await callAIWithRetry(LOVABLE_API_KEY, topic, explanation || topic);
 
     if (!response.ok) {
       if (response.status === 429) {
