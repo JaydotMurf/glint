@@ -2,17 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
+import { UpgradeBanner } from "@/components/UpgradeBanner";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
-import { useFlashcards } from "@/hooks/useFlashcards";
+import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { useAppStore } from "@/store/appStore";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Trash2, Layers, BookOpen, Search, Loader2 } from "lucide-react";
+import { ArrowLeft, Trash2, BookOpen, Search, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 const LibraryPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { concepts, isLoading, deleteConcept } = useSavedConcepts();
+  const { isPremium } = useUsageLimit();
   const { setCurrentConcept, setSavedConceptId } = useAppStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -22,6 +24,8 @@ const LibraryPage = () => {
     navigate("/login");
     return null;
   }
+
+  const showUpgradeBanner = !isPremium && concepts.length >= 5;
 
   const filteredConcepts = concepts.filter((concept) =>
     concept.topic.toLowerCase().includes(searchQuery.toLowerCase())
@@ -109,6 +113,14 @@ const LibraryPage = () => {
               {isLoading ? "Loading..." : `${concepts.length} concept${concepts.length !== 1 ? "s" : ""} saved`}
             </p>
           </div>
+
+          {/* Upgrade Banner for users with 5+ saved concepts */}
+          {showUpgradeBanner && (
+            <UpgradeBanner 
+              message="You're building a great study library! Upgrade to Premium for PDF exports and spaced repetition reminders."
+              className="mb-6 animate-fade-in"
+            />
+          )}
 
           {/* Loading State */}
           {isLoading && (

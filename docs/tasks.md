@@ -543,94 +543,47 @@ Guidelines:
 
 ## Phase 4: Usage Limits & Premium
 
-### Task 4.1: Implement Free Tier Limits ⬜
+### Task 4.1: Implement Free Tier Limits ✅
 **Priority**: 🟡 High  
 **Dependencies**: Task 1.2
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 4.1.1 Track daily usage in profiles table
-- [ ] 4.1.2 Reset usage count daily (via check on frontend)
-- [ ] 4.1.3 Show usage counter in UI
-- [ ] 4.1.4 Block generation after 3 uses
+- [x] 4.1.1 Track daily usage in profiles table
+- [x] 4.1.2 Reset usage count daily (via check on frontend)
+- [x] 4.1.3 Show usage counter in UI
+- [x] 4.1.4 Block generation after 3 uses
 
-**Code Reference** - Usage Check:
-```typescript
-// src/hooks/useUsageLimit.ts
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+**Files Created**:
+- `src/hooks/useUsageLimit.ts` - Usage tracking hook with localStorage fallback for anonymous users
 
-const FREE_DAILY_LIMIT = 3;
-
-export function useUsageLimit() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-
-  const { data: profile } = useQuery({
-    queryKey: ['profile', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('daily_usage_count, last_usage_date, plan_type')
-        .eq('id', user!.id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  const today = new Date().toISOString().split('T')[0];
-  const isNewDay = profile?.last_usage_date !== today;
-  const usageCount = isNewDay ? 0 : (profile?.daily_usage_count ?? 0);
-  const isPremium = profile?.plan_type === 'premium';
-  const canGenerate = isPremium || usageCount < FREE_DAILY_LIMIT;
-  const remainingUses = FREE_DAILY_LIMIT - usageCount;
-
-  const incrementUsage = useMutation({
-    mutationFn: async () => {
-      const newCount = isNewDay ? 1 : usageCount + 1;
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-          daily_usage_count: newCount,
-          last_usage_date: today
-        })
-        .eq('id', user!.id);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-    },
-  });
-
-  return { 
-    usageCount, 
-    remainingUses, 
-    canGenerate, 
-    isPremium, 
-    incrementUsage 
-  };
-}
-```
+**Implementation Notes**:
+- Anonymous users: Usage tracked in localStorage, syncs to DB on login
+- Authenticated users: Usage tracked in profiles table
+- Daily reset happens automatically when date changes
+- Shows "X of 3 free explanations left today" counter
 
 ---
 
-### Task 4.2: Upgrade Flow & Premium Gates ⬜
+### Task 4.2: Upgrade Flow & Premium Gates ✅
 **Priority**: 🟢 Medium  
 **Dependencies**: Task 4.1
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 4.2.1 Show upgrade modal when limit reached
-- [ ] 4.2.2 Add upgrade banner after 5+ saved items
-- [ ] 4.2.3 Gate PDF export to premium
-- [ ] 4.2.4 Prepare for Stripe integration (placeholder)
+- [x] 4.2.1 Show upgrade modal when limit reached
+- [x] 4.2.2 Add upgrade banner after 5+ saved items
+- [x] 4.2.3 Gate PDF export to premium
+- [x] 4.2.4 Prepare for Stripe integration (placeholder)
 
-**Files to Update**:
-- `src/pages/UpgradePage.tsx` - Add pricing details
-- `src/components/UpgradeModal.tsx` - Create modal component
+**Files Created**:
+- `src/components/UpgradeModal.tsx` - Modal shown when hitting usage limit
+- `src/components/UpgradeBanner.tsx` - Banner shown in Library for users with 5+ concepts
+
+**Files Updated**:
+- `src/pages/HomePage.tsx` - Uses useUsageLimit hook, shows upgrade modal
+- `src/pages/ResultsPage.tsx` - PDF export button gated to premium
+- `src/pages/LibraryPage.tsx` - Upgrade banner for 5+ saved items
 
 ---
 
