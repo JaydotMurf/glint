@@ -41,6 +41,10 @@ interface AppState {
   // Loading states
   isGenerating: boolean;
   setIsGenerating: (status: boolean) => void;
+
+  // Track saved concept ID (for linking flashcards)
+  savedConceptId: string | null;
+  setSavedConceptId: (id: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -67,4 +71,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   isGenerating: false,
   setIsGenerating: (status) => set({ isGenerating: status }),
+
+  savedConceptId: null,
+  setSavedConceptId: (id) => set({ savedConceptId: id }),
 }));

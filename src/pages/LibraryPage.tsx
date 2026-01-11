@@ -2,36 +2,81 @@ import { useNavigate } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
+import { useSavedConcepts } from "@/hooks/useSavedConcepts";
+import { useFlashcards } from "@/hooks/useFlashcards";
 import { useAppStore } from "@/store/appStore";
-import { ArrowLeft, Trash2, Layers, BookOpen, Search } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { ArrowLeft, Trash2, Layers, BookOpen, Search, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 
 const LibraryPage = () => {
   const navigate = useNavigate();
-  const { savedConcepts, removeConcept, setCurrentConcept } = useAppStore();
+  const { user } = useAuth();
+  const { concepts, isLoading, deleteConcept } = useSavedConcepts();
+  const { setCurrentConcept, setSavedConceptId } = useAppStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const filteredConcepts = savedConcepts.filter((concept) =>
+  // Redirect to login if not authenticated
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
+
+  const filteredConcepts = concepts.filter((concept) =>
     concept.topic.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleOpenConcept = (conceptId: string) => {
-    const concept = savedConcepts.find((c) => c.id === conceptId);
+    const concept = concepts.find((c) => c.id === conceptId);
     if (concept) {
-      setCurrentConcept(concept);
+      // Convert database concept to app store format
+      setCurrentConcept({
+        id: concept.id,
+        topic: concept.topic,
+        explanations: {
+          simplest: concept.explanation_simplest || "",
+          standard: concept.explanation_standard || "",
+          deepDive: concept.explanation_deep || "",
+        },
+        flashcards: [],
+        savedAt: new Date(concept.created_at),
+      });
+      setSavedConceptId(concept.id);
       navigate("/results");
     }
   };
 
-  const handleDelete = (e: React.MouseEvent, conceptId: string) => {
+  const handleDelete = async (e: React.MouseEvent, conceptId: string) => {
     e.stopPropagation();
-    removeConcept(conceptId);
-    toast.success("Removed from library");
+    setDeletingId(conceptId);
+    deleteConcept.mutate(conceptId, {
+      onSettled: () => setDeletingId(null),
+    });
   };
 
-  const formatDate = (date: Date) => {
-    const d = new Date(date);
+  const handleReview = (e: React.MouseEvent, conceptId: string) => {
+    e.stopPropagation();
+    const concept = concepts.find((c) => c.id === conceptId);
+    if (concept) {
+      setCurrentConcept({
+        id: concept.id,
+        topic: concept.topic,
+        explanations: {
+          simplest: concept.explanation_simplest || "",
+          standard: concept.explanation_standard || "",
+          deepDive: concept.explanation_deep || "",
+        },
+        flashcards: [],
+        savedAt: new Date(concept.created_at),
+      });
+      setSavedConceptId(concept.id);
+      navigate("/flashcards");
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const d = new Date(dateString);
     return d.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -61,12 +106,19 @@ const LibraryPage = () => {
               Saved Concepts
             </h1>
             <p className="text-body text-muted-foreground">
-              {savedConcepts.length} concept{savedConcepts.length !== 1 ? "s" : ""} saved
+              {isLoading ? "Loading..." : `${concepts.length} concept${concepts.length !== 1 ? "s" : ""} saved`}
             </p>
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          )}
+
           {/* Search */}
-          {savedConcepts.length > 0 && (
+          {!isLoading && concepts.length > 0 && (
             <div className="relative mb-6 animate-fade-in animation-delay-100">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -82,7 +134,7 @@ const LibraryPage = () => {
           )}
 
           {/* Concepts List */}
-          {filteredConcepts.length > 0 ? (
+          {!isLoading && filteredConcepts.length > 0 ? (
             <div className="grid gap-3 animate-fade-in animation-delay-200">
               {filteredConcepts.map((concept) => (
                 <GlintCard
@@ -97,12 +149,8 @@ const LibraryPage = () => {
                         {concept.topic}
                       </h3>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-caption text-muted-foreground flex items-center gap-1">
-                          <Layers className="h-3 w-3" />
-                          {concept.flashcards.length} cards
-                        </span>
                         <span className="text-caption text-muted-foreground">
-                          {formatDate(concept.savedAt)}
+                          {formatDate(concept.created_at)}
                         </span>
                       </div>
                     </div>
@@ -110,11 +158,7 @@ const LibraryPage = () => {
                       <GlintButton
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCurrentConcept(concept);
-                          navigate("/flashcards");
-                        }}
+                        onClick={(e) => handleReview(e, concept.id)}
                       >
                         <BookOpen className="h-4 w-4" />
                         Review
@@ -124,21 +168,26 @@ const LibraryPage = () => {
                         size="icon"
                         className="text-muted-foreground hover:text-destructive"
                         onClick={(e) => handleDelete(e, concept.id)}
+                        disabled={deletingId === concept.id}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {deletingId === concept.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
                       </GlintButton>
                     </div>
                   </div>
                 </GlintCard>
               ))}
             </div>
-          ) : savedConcepts.length > 0 ? (
+          ) : !isLoading && concepts.length > 0 ? (
             <div className="text-center py-16 animate-fade-in">
               <p className="text-body text-muted-foreground">
                 No concepts match "{searchQuery}"
               </p>
             </div>
-          ) : (
+          ) : !isLoading ? (
             <div className="text-center py-16 animate-fade-in">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">
                 <BookOpen className="h-8 w-8 text-muted-foreground" />
@@ -157,7 +206,7 @@ const LibraryPage = () => {
                 Explore Topics
               </GlintButton>
             </div>
-          )}
+          ) : null}
         </div>
       </main>
     </div>

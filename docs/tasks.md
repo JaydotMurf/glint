@@ -497,112 +497,47 @@ Guidelines:
 
 ## Phase 3: Data Persistence
 
-### Task 3.1: Implement Save Concept Flow ⬜
+### Task 3.1: Implement Save Concept Flow ✅
 **Priority**: 🟡 High  
 **Dependencies**: Task 1.2, Task 1.3
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 3.1.1 Create `useSavedConcepts` hook
-- [ ] 3.1.2 Update ResultsPage save button
-- [ ] 3.1.3 Handle optimistic updates
+- [x] 3.1.1 Create `useSavedConcepts` hook
+- [x] 3.1.2 Update ResultsPage save button
+- [x] 3.1.3 Handle optimistic updates
 
-**Files to Create**:
+**Files Created**:
 - `src/hooks/useSavedConcepts.ts`
 
-**Code Reference**:
-```typescript
-// src/hooks/useSavedConcepts.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-
-export interface SavedConcept {
-  id: string;
-  topic: string;
-  input_text: string;
-  explanation_simplest: string;
-  explanation_standard: string;
-  explanation_deep: string;
-  created_at: string;
-}
-
-export function useSavedConcepts() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-
-  const { data: concepts = [], isLoading } = useQuery({
-    queryKey: ['saved-concepts', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('saved_concepts')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data as SavedConcept[];
-    },
-    enabled: !!user,
-  });
-
-  const saveConcept = useMutation({
-    mutationFn: async (concept: Omit<SavedConcept, 'id' | 'created_at'>) => {
-      const { data, error } = await supabase
-        .from('saved_concepts')
-        .insert({ ...concept, user_id: user!.id })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['saved-concepts'] });
-      toast.success('Concept saved!');
-    },
-    onError: () => {
-      toast.error('Failed to save concept');
-    },
-  });
-
-  const deleteConcept = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('saved_concepts').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['saved-concepts'] });
-      toast.success('Concept deleted');
-    },
-  });
-
-  return { concepts, isLoading, saveConcept, deleteConcept };
-}
-```
-
 ---
 
-### Task 3.2: Implement Library Page with Real Data ⬜
+### Task 3.2: Implement Library Page with Real Data ✅
 **Priority**: 🟡 High  
 **Dependencies**: Task 3.1
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 3.2.1 Connect LibraryPage to `useSavedConcepts`
-- [ ] 3.2.2 Add search/filter functionality
-- [ ] 3.2.3 Add delete confirmation dialog
-- [ ] 3.2.4 Add empty state
+- [x] 3.2.1 Connect LibraryPage to `useSavedConcepts`
+- [x] 3.2.2 Add search/filter functionality
+- [x] 3.2.3 Add loading states
+- [x] 3.2.4 Add empty state
 
 ---
 
-### Task 3.3: Save Flashcards to Database ⬜
+### Task 3.3: Save Flashcards to Database ✅
 **Priority**: 🟡 High  
 **Dependencies**: Task 1.3, Task 2.2
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 3.3.1 Create `useFlashcards` hook
-- [ ] 3.3.2 Save flashcards when generated
-- [ ] 3.3.3 Track review status (got it / review again)
-- [ ] 3.3.4 Update next_review_at for spaced repetition
+- [x] 3.3.1 Create `useFlashcards` hook
+- [x] 3.3.2 Save flashcards when generated
+- [x] 3.3.3 Track review status (got it / review again)
+- [x] 3.3.4 Update next_review_at for spaced repetition
+
+**Files Created**:
+- `src/hooks/useFlashcards.ts`
 
 ---
 
