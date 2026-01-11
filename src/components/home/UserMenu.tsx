@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { GlintButton } from "@/components/ui/glint-button";
@@ -16,7 +15,6 @@ import { useAppStore } from "@/store/appStore";
 export function UserMenu() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
   const { isPremium, savedConcepts } = useAppStore();
 
   const handleSignOut = async () => {
@@ -32,7 +30,7 @@ export function UserMenu() {
   const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <GlintButton
           variant="ghost"
@@ -61,10 +59,7 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         {savedConcepts.length > 0 && (
           <DropdownMenuItem
-            onClick={() => {
-              setIsOpen(false);
-              navigate("/library");
-            }}
+            onClick={() => navigate("/library")}
             className="cursor-pointer"
           >
             <BookOpen className="h-4 w-4 mr-2" />
@@ -73,10 +68,7 @@ export function UserMenu() {
         )}
         {!isPremium && (
           <DropdownMenuItem
-            onClick={() => {
-              setIsOpen(false);
-              navigate("/upgrade");
-            }}
+            onClick={() => navigate("/upgrade")}
             className="cursor-pointer text-primary"
           >
             <Crown className="h-4 w-4 mr-2" />
