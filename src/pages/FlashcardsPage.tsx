@@ -33,10 +33,12 @@ const FlashcardsPage = () => {
   const [isComplete, setIsComplete] = useState(false);
   const [flashcards, setFlashcards] = useState<FlashcardItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   useEffect(() => {
     const loadOrGenerateFlashcards = async () => {
       if (!currentConcept) return;
+      if (hasGenerated || isGenerating) return; // Prevent duplicate calls
 
       // If we have a saved concept with flashcards in DB, use those
       if (savedConceptId && dbFlashcards.length > 0) {
@@ -53,11 +55,25 @@ const FlashcardsPage = () => {
           }
         });
         setMasteredCards(mastered);
+        setHasGenerated(true);
         return;
       }
 
-      // Otherwise, generate new flashcards
+      // Use flashcards from currentConcept if available (already generated during explanation)
+      if (currentConcept.flashcards && currentConcept.flashcards.length > 0 && !savedConceptId) {
+        const cards = currentConcept.flashcards.map((card, index) => ({
+          id: `temp-${index}`,
+          front: card.front,
+          back: card.back,
+        }));
+        setFlashcards(cards);
+        setHasGenerated(true);
+        return;
+      }
+
+      // Otherwise, generate new flashcards (only if not already generated)
       setIsGenerating(true);
+      setHasGenerated(true);
       try {
         const generated = await generateFlashcardsAI(
           currentConcept.topic,
@@ -73,7 +89,7 @@ const FlashcardsPage = () => {
         setFlashcards(cards);
       } catch (error) {
         console.error('Failed to generate flashcards:', error);
-        toast.error('Failed to generate flashcards');
+        toast.error('Failed to generate flashcards. Please try again in a moment.');
         navigate('/results');
       } finally {
         setIsGenerating(false);
@@ -83,7 +99,7 @@ const FlashcardsPage = () => {
     if (!loadingDbFlashcards) {
       loadOrGenerateFlashcards();
     }
-  }, [currentConcept, savedConceptId, dbFlashcards, loadingDbFlashcards, navigate]);
+  }, [currentConcept, savedConceptId, dbFlashcards, loadingDbFlashcards, navigate, hasGenerated, isGenerating]);
 
   if (!currentConcept) {
     navigate("/");
