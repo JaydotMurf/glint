@@ -60,8 +60,8 @@ const FlashcardsPage = () => {
       setIsGenerating(true);
       try {
         const generated = await generateFlashcardsAI(
-          currentConcept.explanations.standard,
-          currentConcept.topic
+          currentConcept.topic,
+          currentConcept.explanations.standard
         );
         
         const cards = generated.map((card, index) => ({
