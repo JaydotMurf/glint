@@ -5,8 +5,9 @@ import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
 import { GlintTabs } from "@/components/ui/glint-tabs";
 import { useAppStore } from "@/store/appStore";
-import { ArrowLeft, Layers, BookOpen, Microscope, Bookmark, Plus, Check } from "lucide-react";
-import { toast } from "sonner";
+import { useSavedConcepts } from "@/hooks/useSavedConcepts";
+import { useAuth } from "@/contexts/AuthContext";
+import { ArrowLeft, Bookmark, Plus, Check, Layers, Loader2 } from "lucide-react";
 
 type ExplanationLevel = "simplest" | "standard" | "deepDive";
 
@@ -18,7 +19,9 @@ const levelTabs = [
 
 const ResultsPage = () => {
   const navigate = useNavigate();
-  const { currentConcept, saveConcept, savedConcepts, setCurrentConcept } = useAppStore();
+  const { user } = useAuth();
+  const { currentConcept, setCurrentConcept, savedConceptId, setSavedConceptId } = useAppStore();
+  const { concepts, saveConcept } = useSavedConcepts();
   const [activeLevel, setActiveLevel] = useState<ExplanationLevel>("standard");
 
   if (!currentConcept) {
@@ -26,12 +29,29 @@ const ResultsPage = () => {
     return null;
   }
 
-  const isSaved = savedConcepts.some((c) => c.id === currentConcept.id);
+  // Check if this concept is already saved (by matching topic and explanations)
+  const isSaved = savedConceptId !== null || concepts.some(
+    (c) => 
+      c.topic === currentConcept.topic && 
+      c.explanation_standard === currentConcept.explanations.standard
+  );
 
-  const handleSave = () => {
-    saveConcept(currentConcept);
-    toast.success("Saved to your library!", {
-      description: "You can review this anytime.",
+  const handleSave = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    saveConcept.mutate({
+      topic: currentConcept.topic,
+      input_text: currentConcept.topic,
+      explanation_simplest: currentConcept.explanations.simplest,
+      explanation_standard: currentConcept.explanations.standard,
+      explanation_deep: currentConcept.explanations.deepDive,
+    }, {
+      onSuccess: (data) => {
+        setSavedConceptId(data.id);
+      }
     });
   };
 
@@ -57,9 +77,14 @@ const ResultsPage = () => {
           variant={isSaved ? "ghost" : "secondary"}
           size="sm"
           onClick={handleSave}
-          disabled={isSaved}
+          disabled={isSaved || saveConcept.isPending}
         >
-          {isSaved ? (
+          {saveConcept.isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : isSaved ? (
             <>
               <Check className="h-4 w-4" />
               Saved
@@ -143,6 +168,7 @@ const ResultsPage = () => {
               size="lg"
               onClick={() => {
                 setCurrentConcept(null);
+                setSavedConceptId(null);
                 navigate("/");
               }}
             >

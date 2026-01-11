@@ -6,31 +6,90 @@ import { GlintProgress } from "@/components/ui/glint-progress";
 import { Flashcard } from "@/components/Flashcard";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useAppStore } from "@/store/appStore";
-import { ArrowLeft, Check, RotateCcw, PartyPopper, Home } from "lucide-react";
+import { useFlashcards } from "@/hooks/useFlashcards";
+import { useSavedConcepts } from "@/hooks/useSavedConcepts";
+import { useAuth } from "@/contexts/AuthContext";
+import { ArrowLeft, Check, RotateCcw, PartyPopper, Home, Loader2 } from "lucide-react";
+import { generateFlashcards as generateFlashcardsAI } from "@/lib/ai";
+import { toast } from "sonner";
+
+interface FlashcardItem {
+  id: string;
+  front: string;
+  back: string;
+}
 
 const FlashcardsPage = () => {
   const navigate = useNavigate();
-  const { currentConcept, saveConcept } = useAppStore();
+  const { user } = useAuth();
+  const { currentConcept, savedConceptId, setSavedConceptId } = useAppStore();
+  const { saveConcept } = useSavedConcepts();
+  const { flashcards: dbFlashcards, saveFlashcards, updateFlashcardStatus, isLoading: loadingDbFlashcards } = useFlashcards(savedConceptId || undefined);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [masteredCards, setMasteredCards] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [flashcards, setFlashcards] = useState<FlashcardItem[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // Simulate loading animation
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+    const loadOrGenerateFlashcards = async () => {
+      if (!currentConcept) return;
+
+      // If we have a saved concept with flashcards in DB, use those
+      if (savedConceptId && dbFlashcards.length > 0) {
+        setFlashcards(dbFlashcards.map((f) => ({
+          id: f.id,
+          front: f.front_text,
+          back: f.back_text,
+        })));
+        // Set mastered cards based on review status
+        const mastered = new Set<string>();
+        dbFlashcards.forEach((f) => {
+          if (f.review_status === 'mastered') {
+            mastered.add(f.id);
+          }
+        });
+        setMasteredCards(mastered);
+        return;
+      }
+
+      // Otherwise, generate new flashcards
+      setIsGenerating(true);
+      try {
+        const generated = await generateFlashcardsAI(
+          currentConcept.explanations.standard,
+          currentConcept.topic
+        );
+        
+        const cards = generated.map((card, index) => ({
+          id: `temp-${index}`,
+          front: card.front,
+          back: card.back,
+        }));
+        
+        setFlashcards(cards);
+      } catch (error) {
+        console.error('Failed to generate flashcards:', error);
+        toast.error('Failed to generate flashcards');
+        navigate('/results');
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    if (!loadingDbFlashcards) {
+      loadOrGenerateFlashcards();
+    }
+  }, [currentConcept, savedConceptId, dbFlashcards, loadingDbFlashcards, navigate]);
 
   if (!currentConcept) {
     navigate("/");
     return null;
   }
 
-  const flashcards = currentConcept.flashcards;
   const currentCard = flashcards[currentIndex];
   const progress = currentIndex + 1;
 
@@ -38,14 +97,29 @@ const FlashcardsPage = () => {
     setIsFlipped(!isFlipped);
   };
 
-  const handleGotIt = () => {
+  const handleGotIt = async () => {
+    if (!currentCard) return;
+    
     const newMastered = new Set(masteredCards);
     newMastered.add(currentCard.id);
     setMasteredCards(newMastered);
+    
+    // Update status in DB if it's a saved flashcard
+    if (!currentCard.id.startsWith('temp-') && user) {
+      updateFlashcardStatus.mutate({ id: currentCard.id, status: 'mastered' });
+    }
+    
     moveToNext();
   };
 
-  const handleReviewAgain = () => {
+  const handleReviewAgain = async () => {
+    if (!currentCard) return;
+    
+    // Update status in DB if it's a saved flashcard
+    if (!currentCard.id.startsWith('temp-') && user) {
+      updateFlashcardStatus.mutate({ id: currentCard.id, status: 'learning' });
+    }
+    
     moveToNext();
   };
 
@@ -60,16 +134,74 @@ const FlashcardsPage = () => {
     }
   };
 
-  const handleSaveAndExit = () => {
-    saveConcept(currentConcept);
-    navigate("/");
+  const handleSaveAndExit = async () => {
+    if (!user) {
+      navigate("/");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      let conceptId = savedConceptId;
+
+      // If concept isn't saved yet, save it first
+      if (!conceptId) {
+        const result = await new Promise<{ id: string }>((resolve, reject) => {
+          saveConcept.mutate({
+            topic: currentConcept.topic,
+            input_text: currentConcept.topic,
+            explanation_simplest: currentConcept.explanations.simplest,
+            explanation_standard: currentConcept.explanations.standard,
+            explanation_deep: currentConcept.explanations.deepDive,
+          }, {
+            onSuccess: (data) => resolve(data),
+            onError: reject,
+          });
+        });
+        conceptId = result.id;
+        setSavedConceptId(conceptId);
+      }
+
+      // Save flashcards if they're new (temp IDs)
+      const newFlashcards = flashcards.filter((f) => f.id.startsWith('temp-'));
+      if (newFlashcards.length > 0 && conceptId) {
+        await saveFlashcards.mutateAsync({
+          conceptId,
+          flashcards: newFlashcards.map((f) => ({
+            front: f.front,
+            back: f.back,
+          })),
+        });
+      }
+
+      toast.success('Progress saved!');
+      navigate("/");
+    } catch (error) {
+      console.error('Failed to save:', error);
+      toast.error('Failed to save progress');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  if (isLoading) {
+  if (isGenerating || loadingDbFlashcards) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center animate-fade-in">
           <LoadingSpinner size="lg" message="Generating your flashcards..." />
+        </div>
+      </div>
+    );
+  }
+
+  if (flashcards.length === 0) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center animate-fade-in">
+          <p className="text-muted-foreground">No flashcards available</p>
+          <GlintButton variant="primary" size="lg" onClick={() => navigate("/results")} className="mt-4">
+            Go Back
+          </GlintButton>
         </div>
       </div>
     );
@@ -114,9 +246,19 @@ const FlashcardsPage = () => {
               variant="primary"
               size="lg"
               onClick={handleSaveAndExit}
+              disabled={isSaving}
             >
-              <Check className="h-5 w-5" />
-              Save & Continue
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Check className="h-5 w-5" />
+                  Save & Continue
+                </>
+              )}
             </GlintButton>
             <GlintButton
               variant="secondary"
@@ -179,12 +321,14 @@ const FlashcardsPage = () => {
 
           {/* Flashcard */}
           <div className="mb-8">
-            <Flashcard
-              front={currentCard.front}
-              back={currentCard.back}
-              isFlipped={isFlipped}
-              onFlip={handleFlip}
-            />
+            {currentCard && (
+              <Flashcard
+                front={currentCard.front}
+                back={currentCard.back}
+                isFlipped={isFlipped}
+                onFlip={handleFlip}
+              />
+            )}
           </div>
 
           {/* Action Buttons */}
