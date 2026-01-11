@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useAppStore } from "@/store/appStore";
 import { generateExplanation } from "@/lib/ai";
 import { Search, BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 const examplePrompts = [
   "Explain the Krebs cycle",
@@ -46,6 +47,10 @@ const HomePage = () => {
       navigate("/results");
     } catch (error) {
       console.error("Failed to generate explanation:", error);
+      const message = error instanceof Error ? error.message : "Failed to generate explanation";
+      toast.error("Oops!", {
+        description: message,
+      });
     } finally {
       setIsGenerating(false);
     }

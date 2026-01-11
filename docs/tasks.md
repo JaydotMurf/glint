@@ -259,15 +259,16 @@ CREATE INDEX idx_flashcards_next_review ON public.flashcards(next_review_at);
 
 ## Phase 2: AI Explanation Engine
 
-### Task 2.1: Create Explanation Edge Function ⬜
+### Task 2.1: Create Explanation Edge Function ✅
 **Priority**: 🔴 Critical  
 **Dependencies**: Task 1.1
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 2.1.1 Create edge function for AI explanations
-- [ ] 2.1.2 Implement 3-tier prompt structure
-- [ ] 2.1.3 Add error handling (429, 402)
-- [ ] 2.1.4 Connect frontend to edge function
+- [x] 2.1.1 Create edge function for AI explanations
+- [x] 2.1.2 Implement 3-tier prompt structure
+- [x] 2.1.3 Add error handling (429, 402)
+- [x] 2.1.4 Connect frontend to edge function
 
 **Edge Function** - `supabase/functions/generate-explanation/index.ts`:
 ```typescript
@@ -386,14 +387,15 @@ serve(async (req) => {
 
 ---
 
-### Task 2.2: Create Flashcard Generation Edge Function ⬜
+### Task 2.2: Create Flashcard Generation Edge Function ✅
 **Priority**: 🟡 High  
 **Dependencies**: Task 2.1
+**Completed**: 2026-01-11
 
 **Subtasks**:
-- [ ] 2.2.1 Create flashcard generation edge function
-- [ ] 2.2.2 Implement structured output with tool calling
-- [ ] 2.2.3 Connect to flashcards page
+- [x] 2.2.1 Create flashcard generation edge function
+- [x] 2.2.2 Implement structured output with tool calling
+- [x] 2.2.3 Connect to flashcards page
 
 **Edge Function** - `supabase/functions/generate-flashcards/index.ts`:
 ```typescript
