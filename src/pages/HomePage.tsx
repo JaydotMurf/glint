@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Logo } from "@/components/Logo";
+import { HomeHeader } from "@/components/home/HomeHeader";
+import { ExamplePrompts } from "@/components/home/ExamplePrompts";
+import { RecentConcepts } from "@/components/home/RecentConcepts";
+import { AuthNudge } from "@/components/home/AuthNudge";
 import { GlintButton } from "@/components/ui/glint-button";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useAppStore } from "@/store/appStore";
 import { generateExplanation } from "@/lib/ai";
-import { Search, BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
-
-const examplePrompts = [
-  "Explain the Krebs cycle",
-  "What is quantum entanglement?",
-  "How does photosynthesis work?",
-  "Explain derivatives in calculus",
-];
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -24,8 +20,7 @@ const HomePage = () => {
     setCurrentConcept, 
     dailyExplanations,
     isPremium,
-    incrementDailyExplanations,
-    savedConcepts 
+    incrementDailyExplanations
   } = useAppStore();
 
   const FREE_LIMIT = 3;
@@ -65,64 +60,34 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="w-full px-6 py-4 flex items-center justify-between">
-        <Logo size="md" />
-        <div className="flex items-center gap-3">
-          {savedConcepts.length > 0 && (
-            <GlintButton
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/library")}
-            >
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Library</span>
-            </GlintButton>
-          )}
-          {!isPremium && (
-            <span className="text-caption text-muted-foreground">
-              {FREE_LIMIT - dailyExplanations} left today
-            </span>
-          )}
-        </div>
-      </header>
+      <HomeHeader />
 
-      {/* Main Content */}
+      {/* Main Content - Centered */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-24">
-        <div className="w-full max-w-2xl mx-auto animate-fade-in">
-          {/* Hero Text */}
-          <div className="text-center mb-10">
-            <h1 className="text-display text-foreground mb-4">
-              Understand anything.
-              <br />
-              <span className="text-primary">Instantly.</span>
-            </h1>
-            <p className="text-body-lg text-muted-foreground max-w-md mx-auto">
-              Paste anything confusing. Get crystal-clear explanations in seconds.
-            </p>
-          </div>
-
+        <div className="w-full max-w-xl mx-auto animate-fade-in">
           {/* Input Area */}
-          <div className="relative mb-6">
-            <div className="absolute left-5 top-6 text-muted-foreground/50">
-              <Search className="h-5 w-5" />
-            </div>
+          <div className="relative mb-4">
             <textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Paste a paragraph or type a concept..."
-              rows={3}
+              placeholder="What's on your mind?"
+              rows={4}
               disabled={isGenerating}
-              className="glint-input pl-14 pr-6 min-h-[120px] resize-none"
+              className="glint-input min-h-[140px] resize-none text-base"
             />
           </div>
+
+          {/* Example Text */}
+          <p className="text-center text-sm text-muted-foreground mb-4">
+            Example: "I'm feeling overwhelmed with everything on my plate"
+          </p>
 
           {/* CTA Button */}
           <GlintButton
             variant="primary"
             size="xl"
-            className="w-full mb-8"
+            className="w-full"
             onClick={() => handleSubmit(inputValue)}
             disabled={!inputValue.trim() || isGenerating}
           >
@@ -130,73 +95,26 @@ const HomePage = () => {
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <Sparkles className="h-5 w-5" />
+                <Sparkles className="h-5 w-5 mr-2" />
                 Make it Clear
               </>
             )}
           </GlintButton>
 
-          {/* Example Prompts */}
-          <div className="text-center">
-            <p className="text-caption text-muted-foreground mb-3">
-              💡 Try these examples:
+          {/* Auth Nudge - Only for unauthenticated users */}
+          <AuthNudge />
+
+          {/* Usage counter for free tier */}
+          {!isPremium && (
+            <p className="text-center text-xs text-muted-foreground/70 mt-3">
+              {FREE_LIMIT - dailyExplanations} free explanations left today
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {examplePrompts.map((prompt) => (
-                <button
-                  key={prompt}
-                  onClick={() => setInputValue(prompt)}
-                  className="px-3 py-1.5 text-sm text-muted-foreground bg-muted rounded-full
-                           hover:text-foreground hover:bg-muted/80 transition-colors duration-200"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </main>
 
-      {/* Recent Concepts (if any) */}
-      {savedConcepts.length > 0 && (
-        <div className="px-6 pb-8 animate-fade-in animation-delay-200">
-          <div className="max-w-2xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-subheading text-foreground">Recent</h2>
-              <GlintButton
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/library")}
-              >
-                See all
-                <ArrowRight className="h-4 w-4" />
-              </GlintButton>
-            </div>
-            <div className="grid gap-3">
-              {savedConcepts.slice(0, 3).map((concept) => (
-                <button
-                  key={concept.id}
-                  onClick={() => {
-                    setCurrentConcept(concept);
-                    navigate("/results");
-                  }}
-                  className="glint-card text-left flex items-center justify-between group"
-                >
-                  <div>
-                    <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                      {concept.topic}
-                    </p>
-                    <p className="text-caption text-muted-foreground">
-                      {concept.flashcards.length} flashcards
-                    </p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Recent Concepts Section */}
+      <RecentConcepts />
     </div>
   );
 };
