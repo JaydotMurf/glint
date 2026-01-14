@@ -4,7 +4,7 @@ import { HomeHeader } from "@/components/home/HomeHeader";
 import { RecentConcepts } from "@/components/home/RecentConcepts";
 import { AuthNudge } from "@/components/home/AuthNudge";
 import { GlintButton } from "@/components/ui/glint-button";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { GenerationProgress } from "@/components/GenerationProgress";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { useAppStore } from "@/store/appStore";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
@@ -68,58 +68,69 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0">
       <HomeHeader />
 
       {/* Main Content - Centered */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-24">
-        <div className="w-full max-w-xl mx-auto animate-fade-in">
-          {/* Input Area */}
-          <div className="relative mb-4">
-            <textarea
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="What's on your mind?"
-              rows={4}
-              disabled={isGenerating}
-              className="glint-input min-h-[140px] resize-none text-base"
-            />
+      <main 
+        id="main-content" 
+        className="flex-1 flex flex-col items-center justify-center px-6 pb-24"
+        role="main"
+        tabIndex={-1}
+      >
+        {isGenerating ? (
+          <div className="w-full max-w-xl mx-auto animate-fade-in">
+            <GenerationProgress type="explanation" />
           </div>
+        ) : (
+          <div className="w-full max-w-xl mx-auto animate-fade-in">
+            {/* Input Area */}
+            <div className="relative mb-4">
+              <label htmlFor="topic-input" className="sr-only">
+                Enter a topic or paste text you want explained
+              </label>
+              <textarea
+                id="topic-input"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="What's on your mind?"
+                rows={4}
+                disabled={isGenerating}
+                className="glint-input min-h-[140px] resize-none text-base"
+                aria-describedby="input-hint"
+              />
+            </div>
 
-          {/* Example Text */}
-          <p className="text-center text-sm text-muted-foreground mb-4">
-            Example: "I'm feeling overwhelmed with everything on my plate"
-          </p>
-
-          {/* CTA Button */}
-          <GlintButton
-            variant="primary"
-            size="xl"
-            className="w-full"
-            onClick={() => handleSubmit(inputValue)}
-            disabled={!inputValue.trim() || isGenerating}
-          >
-            {isGenerating ? (
-              <LoadingSpinner size="sm" />
-            ) : (
-              <>
-                <Sparkles className="h-5 w-5 mr-2" />
-                Make it Clear
-              </>
-            )}
-          </GlintButton>
-
-          {/* Auth Nudge - Only for unauthenticated users */}
-          <AuthNudge />
-
-          {/* Usage counter for free tier */}
-          {!isPremium && (
-            <p className="text-center text-xs text-muted-foreground/70 mt-3">
-              {remainingUses} of {FREE_DAILY_LIMIT} free explanations left today
+            {/* Example Text */}
+            <p id="input-hint" className="text-center text-sm text-muted-foreground mb-4">
+              Example: "I'm feeling overwhelmed with everything on my plate"
             </p>
-          )}
-        </div>
+
+            {/* CTA Button */}
+            <GlintButton
+              variant="primary"
+              size="xl"
+              className="w-full min-h-[56px]"
+              onClick={() => handleSubmit(inputValue)}
+              disabled={!inputValue.trim() || isGenerating}
+              aria-label="Generate explanation"
+            >
+              <Sparkles className="h-5 w-5 mr-2" aria-hidden="true" />
+              Make it Clear
+            </GlintButton>
+
+            {/* Auth Nudge - Only for unauthenticated users */}
+            <AuthNudge />
+
+            {/* Usage counter for free tier */}
+            {!isPremium && (
+              <p className="text-center text-xs text-muted-foreground/70 mt-3" aria-live="polite">
+                {remainingUses} of {FREE_DAILY_LIMIT} free explanations left today
+              </p>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Recent Concepts Section */}
