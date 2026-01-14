@@ -75,7 +75,7 @@ export function useUsageLimit() {
   const canGenerate = isPremium || usageCount < FREE_DAILY_LIMIT;
   const remainingUses = Math.max(0, FREE_DAILY_LIMIT - usageCount);
 
-  // Increment usage for authenticated users
+  // Increment usage - only for anonymous users (server handles authenticated users)
   const incrementUsage = useMutation({
     mutationFn: async () => {
       if (!user) {
@@ -86,20 +86,12 @@ export function useUsageLimit() {
         return;
       }
 
-      // For authenticated users, update database
-      const newCount = isNewDay ? 1 : dbUsageCount + 1;
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-          daily_usage_count: newCount,
-          last_usage_date: today
-        })
-        .eq('id', user.id);
-      
-      if (error) throw error;
+      // For authenticated users, just invalidate the cache to refresh from server
+      // The server-side edge function handles the actual increment
     },
     onSuccess: () => {
       if (user) {
+        // Refresh profile data to get updated usage count from server
         queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
       }
     },

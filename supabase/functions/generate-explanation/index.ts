@@ -1,9 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const FREE_DAILY_LIMIT = 3;
 
 const SYSTEM_PROMPT = `You are a clear, friendly tutor helping a stressed college student understand a concept.
 Generate 3 explanations of this concept:
@@ -49,6 +52,82 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const authHeader = req.headers.get('Authorization');
+
+    // Check if user is authenticated
+    let userId: string | null = null;
+    let isPremium = false;
+    let currentUsageCount = 0;
+
+    if (authHeader?.startsWith('Bearer ')) {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } }
+      });
+
+      const token = authHeader.replace('Bearer ', '');
+      const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+      
+      if (!claimsError && claimsData?.claims?.sub) {
+        userId = claimsData.claims.sub;
+
+        // Get user's profile to check usage and premium status
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('daily_usage_count, last_usage_date, plan_type')
+          .eq('id', userId)
+          .single();
+
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+        } else if (profile) {
+          isPremium = profile.plan_type === 'premium';
+          
+          // Check if it's a new day - reset count if so
+          const today = new Date().toISOString().split('T')[0];
+          const lastUsageDate = profile.last_usage_date;
+          
+          if (lastUsageDate !== today) {
+            // New day, reset count
+            currentUsageCount = 0;
+          } else {
+            currentUsageCount = profile.daily_usage_count || 0;
+          }
+
+          // Enforce limit for non-premium users
+          if (!isPremium && currentUsageCount >= FREE_DAILY_LIMIT) {
+            return new Response(
+              JSON.stringify({ 
+                error: "Daily limit reached",
+                code: "LIMIT_EXCEEDED",
+                message: "You've used all 3 free explanations today. Upgrade to Premium for unlimited access!"
+              }),
+              { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
+
+          // Increment usage count BEFORE generating (to prevent race conditions)
+          const newCount = currentUsageCount + 1;
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ 
+              daily_usage_count: newCount,
+              last_usage_date: today
+            })
+            .eq('id', userId);
+
+          if (updateError) {
+            console.error("Error updating usage count:", updateError);
+          }
+        }
+      }
+    }
+
+    // If no authenticated user, allow the request (anonymous users handled client-side)
+    // This maintains backward compatibility for non-logged-in users
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {

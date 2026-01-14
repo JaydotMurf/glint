@@ -47,11 +47,19 @@ const HomePage = () => {
     try {
       const concept = await generateExplanation(topic.trim());
       setCurrentConcept(concept);
+      // Only increment local usage for anonymous users (server handles authenticated users)
       await incrementUsage.mutateAsync();
       navigate("/results");
     } catch (error) {
       console.error("Failed to generate explanation:", error);
       const message = error instanceof Error ? error.message : "Failed to generate explanation";
+      
+      // Handle server-enforced limit exceeded
+      if (message === "LIMIT_EXCEEDED") {
+        setShowUpgradeModal(true);
+        return;
+      }
+      
       toast.error("Oops!", {
         description: message,
       });

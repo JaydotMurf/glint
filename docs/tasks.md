@@ -553,15 +553,18 @@ Guidelines:
 - [x] 4.1.2 Reset usage count daily (via check on frontend)
 - [x] 4.1.3 Show usage counter in UI
 - [x] 4.1.4 Block generation after 3 uses
+- [x] 4.1.5 **Server-side enforcement** (added 2026-01-14)
 
 **Files Created**:
 - `src/hooks/useUsageLimit.ts` - Usage tracking hook with localStorage fallback for anonymous users
 
 **Implementation Notes**:
 - Anonymous users: Usage tracked in localStorage, syncs to DB on login
-- Authenticated users: Usage tracked in profiles table
+- Authenticated users: Usage tracked in profiles table AND enforced server-side
 - Daily reset happens automatically when date changes
 - Shows "X of 3 free explanations left today" counter
+- **Bug Fix (2026-01-14)**: Added server-side enforcement in `generate-explanation` edge function to prevent users bypassing limits by signing out/in. The edge function now validates JWT, checks `daily_usage_count` in profiles table, and returns 403 if limit exceeded before generating.
+
 
 ---
 
