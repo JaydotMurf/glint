@@ -10,10 +10,20 @@ export async function generateExplanation(topic: string): Promise<Concept> {
 
   if (error) {
     console.error("Error calling generate-explanation:", error);
+    
+    // Check for limit exceeded error (403)
+    if (error.message?.includes('403') || error.message?.includes('LIMIT_EXCEEDED')) {
+      throw new Error("LIMIT_EXCEEDED");
+    }
+    
     throw new Error(error.message || "Failed to generate explanation");
   }
 
   if (data.error) {
+    // Check for limit exceeded from response body
+    if (data.code === "LIMIT_EXCEEDED") {
+      throw new Error("LIMIT_EXCEEDED");
+    }
     throw new Error(data.error);
   }
 
