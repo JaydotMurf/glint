@@ -9,8 +9,9 @@ import { UpgradeModal } from "@/components/UpgradeModal";
 import { useAppStore } from "@/store/appStore";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { generateExplanation } from "@/lib/ai";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Zap, BookOpen, Brain } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -41,20 +42,17 @@ const HomePage = () => {
     }
 
     setIsGenerating(true);
-    // Reset saved concept ID for new generations
     setSavedConceptId(null);
     
     try {
       const concept = await generateExplanation(topic.trim());
       setCurrentConcept(concept);
-      // Only increment local usage for anonymous users (server handles authenticated users)
       await incrementUsage.mutateAsync();
       navigate("/results");
     } catch (error) {
       console.error("Failed to generate explanation:", error);
       const message = error instanceof Error ? error.message : "Failed to generate explanation";
       
-      // Handle server-enforced limit exceeded
       if (message === "LIMIT_EXCEEDED") {
         setShowUpgradeModal(true);
         return;
@@ -75,74 +73,211 @@ const HomePage = () => {
     }
   };
 
+  const features = [
+    { icon: Zap, label: "Instant clarity", color: "from-yellow-400 to-orange-500" },
+    { icon: BookOpen, label: "3 depth levels", color: "from-primary to-purple-500" },
+    { icon: Brain, label: "AI flashcards", color: "from-accent to-teal-400" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0">
-      <HomeHeader />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full 
+                     bg-gradient-to-br from-primary/20 to-purple-500/10 blur-3xl 
+                     animate-pulse-soft"
+        />
+        <div 
+          className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full 
+                     bg-gradient-to-br from-accent/20 to-teal-400/10 blur-3xl 
+                     animate-pulse-soft animation-delay-500"
+        />
+        <div 
+          className="absolute top-[40%] right-[20%] w-[300px] h-[300px] rounded-full 
+                     bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl 
+                     animate-float"
+        />
+      </div>
 
-      {/* Main Content - Centered */}
-      <main 
-        id="main-content" 
-        className="flex-1 flex flex-col items-center justify-center px-6 pb-24"
-        role="main"
-        tabIndex={-1}
-      >
-        {isGenerating ? (
-          <div className="w-full max-w-xl mx-auto animate-fade-in">
-            <GenerationProgress type="explanation" />
-          </div>
-        ) : (
-          <div className="w-full max-w-xl mx-auto animate-fade-in">
-            {/* Input Area */}
-            <div className="relative mb-4">
-              <label htmlFor="topic-input" className="sr-only">
-                Enter a topic or paste text you want explained
-              </label>
-              <textarea
-                id="topic-input"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="What's on your mind?"
-                rows={4}
-                disabled={isGenerating}
-                className="glint-input min-h-[140px] resize-none text-base"
-                aria-describedby="input-hint"
-              />
-            </div>
+      {/* Grid pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, hsl(var(--foreground)) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(var(--foreground)) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
 
-            {/* Example Text */}
-            <p id="input-hint" className="text-center text-sm text-muted-foreground mb-4">
-              Example: "I'm feeling overwhelmed with everything on my plate"
-            </p>
+      <div className="relative z-10 flex flex-col min-h-screen pb-20 md:pb-0">
+        <HomeHeader />
 
-            {/* CTA Button */}
-            <GlintButton
-              variant="primary"
-              size="xl"
-              className="w-full min-h-[56px]"
-              onClick={() => handleSubmit(inputValue)}
-              disabled={!inputValue.trim() || isGenerating}
-              aria-label="Generate explanation"
+        {/* Main Content */}
+        <main 
+          id="main-content" 
+          className="flex-1 flex flex-col items-center justify-center px-6 py-12"
+          role="main"
+          tabIndex={-1}
+        >
+          {isGenerating ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="w-full max-w-xl mx-auto"
             >
-              <Sparkles className="h-5 w-5 mr-2" aria-hidden="true" />
-              Make it Clear
-            </GlintButton>
+              <GenerationProgress type="explanation" />
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="w-full max-w-2xl mx-auto"
+            >
+              {/* Hero Section */}
+              <div className="text-center mb-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full 
+                             bg-primary/10 border border-primary/20 mb-6"
+                >
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">
+                    AI-Powered Learning
+                  </span>
+                </motion.div>
+                
+                <motion.h1 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-display-sm md:text-display mb-4 text-foreground"
+                >
+                  Understand anything,
+                  <br />
+                  <span className="bg-gradient-to-r from-primary via-purple-500 to-accent bg-clip-text text-transparent">
+                    instantly.
+                  </span>
+                </motion.h1>
+                
+                <motion.p 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-body-lg text-muted-foreground max-w-md mx-auto"
+                >
+                  Paste any confusing concept. Get clear explanations at your level.
+                </motion.p>
+              </div>
 
-            {/* Auth Nudge - Only for unauthenticated users */}
-            <AuthNudge />
+              {/* Input Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="relative"
+              >
+                <div className="relative group">
+                  {/* Glow effect behind input */}
+                  <div 
+                    className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-purple-500/20 to-accent/20 
+                               rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                  
+                  <div className="relative bg-card/80 backdrop-blur-xl rounded-2xl border border-border p-2 shadow-elevated">
+                    <label htmlFor="topic-input" className="sr-only">
+                      Enter a topic or paste text you want explained
+                    </label>
+                    <textarea
+                      id="topic-input"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="What do you want to understand?"
+                      rows={3}
+                      disabled={isGenerating}
+                      className="w-full px-5 py-4 bg-transparent text-lg 
+                                placeholder:text-muted-foreground/50
+                                focus:outline-none resize-none"
+                      aria-describedby="input-hint"
+                    />
+                    
+                    <div className="flex items-center justify-between px-3 pb-2">
+                      <p id="input-hint" className="text-caption text-muted-foreground/60">
+                        Press Enter to generate • Shift+Enter for new line
+                      </p>
+                      
+                      <GlintButton
+                        variant="primary"
+                        size="md"
+                        onClick={() => handleSubmit(inputValue)}
+                        disabled={!inputValue.trim() || isGenerating}
+                        aria-label="Generate explanation"
+                        className="shadow-glow-primary"
+                      >
+                        <Sparkles className="h-4 w-4" aria-hidden="true" />
+                        Make it Clear
+                      </GlintButton>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
-            {/* Usage counter for free tier */}
-            {!isPremium && (
-              <p className="text-center text-xs text-muted-foreground/70 mt-3" aria-live="polite">
-                {remainingUses} of {FREE_DAILY_LIMIT} free explanations left today
-              </p>
-            )}
-          </div>
-        )}
-      </main>
+              {/* Feature Pills */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="flex flex-wrap justify-center gap-3 mt-8"
+              >
+                {features.map((feature, index) => (
+                  <div 
+                    key={feature.label}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full 
+                               bg-card/60 backdrop-blur-sm border border-border
+                               text-sm text-muted-foreground"
+                  >
+                    <div className={`p-1 rounded-md bg-gradient-to-br ${feature.color}`}>
+                      <feature.icon className="h-3 w-3 text-white" />
+                    </div>
+                    {feature.label}
+                  </div>
+                ))}
+              </motion.div>
 
-      {/* Recent Concepts Section */}
-      <RecentConcepts />
+              {/* Auth Nudge */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+              >
+                <AuthNudge />
+              </motion.div>
+
+              {/* Usage counter */}
+              {!isPremium && (
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="text-center text-small text-muted-foreground/60 mt-4" 
+                  aria-live="polite"
+                >
+                  {remainingUses} of {FREE_DAILY_LIMIT} free explanations left today
+                </motion.p>
+              )}
+            </motion.div>
+          )}
+        </main>
+
+        {/* Recent Concepts */}
+        <RecentConcepts />
+      </div>
 
       {/* Upgrade Modal */}
       <UpgradeModal 

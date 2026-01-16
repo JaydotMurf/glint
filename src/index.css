@@ -1,46 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Glint Design System - Calm, Clear, Fast */
+/* Glint Design System - Modern Professional Dark Theme */
 
 @layer base {
   :root {
-    /* Primary - Calm Blue */
-    --primary: 231 100% 68%;
+    /* Primary - Vibrant Blue-Purple Gradient */
+    --primary: 235 85% 65%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 231 85% 62%;
-    --primary-pressed: 231 75% 55%;
+    --primary-hover: 235 80% 72%;
+    --primary-pressed: 235 75% 58%;
 
-    /* Accent - Soft Purple */
-    --accent: 270 30% 62%;
+    /* Accent - Teal/Cyan for success states */
+    --accent: 172 66% 50%;
     --accent-foreground: 0 0% 100%;
-    --accent-soft: 270 60% 93%;
+    --accent-soft: 172 60% 95%;
 
-    /* Background & Surfaces */
-    --background: 220 20% 98%;
-    --foreground: 220 20% 16%;
+    /* Background & Surfaces - Light Mode */
+    --background: 220 20% 97%;
+    --foreground: 224 71% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 16%;
+    --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 16%;
+    --popover-foreground: 224 71% 4%;
 
     /* Muted & Secondary */
-    --muted: 220 14% 96%;
+    --muted: 220 14% 92%;
     --muted-foreground: 220 9% 46%;
     --secondary: 220 14% 96%;
-    --secondary-foreground: 220 20% 16%;
+    --secondary-foreground: 224 71% 4%;
 
     /* Borders & Inputs */
-    --border: 220 13% 91%;
-    --border-medium: 220 13% 84%;
+    --border: 220 13% 87%;
+    --border-medium: 220 13% 80%;
     --input: 220 13% 91%;
-    --ring: 231 100% 68%;
+    --ring: 235 85% 65%;
 
     /* Semantic Colors */
-    --success: 160 84% 39%;
+    --success: 162 72% 45%;
     --success-foreground: 0 0% 100%;
-    --success-soft: 160 60% 95%;
+    --success-soft: 162 60% 95%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
@@ -49,67 +51,88 @@
     --info-foreground: 0 0% 100%;
 
     /* Special Surfaces */
-    --flashcard: 36 100% 97%;
-    --flashcard-foreground: 220 20% 16%;
+    --flashcard: 220 14% 96%;
+    --flashcard-foreground: 224 71% 4%;
+
+    /* Glass Effect */
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-border: 220 13% 91% / 0.5;
+
+    /* Gradient Colors */
+    --gradient-start: 235 85% 65%;
+    --gradient-end: 280 85% 65%;
+    --gradient-accent: 172 66% 50%;
 
     /* Radius */
     --radius: 0.75rem;
 
-    /* Sidebar (keeping defaults) */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-primary: 235 85% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 224 71% 4%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 231 100% 68%;
+    --sidebar-ring: 235 85% 65%;
   }
 
   .dark {
-    --primary: 231 100% 72%;
-    --primary-foreground: 220 20% 10%;
-    --primary-hover: 231 90% 78%;
-    --primary-pressed: 231 85% 65%;
+    /* Primary - Vibrant in dark mode */
+    --primary: 235 85% 70%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 235 80% 78%;
+    --primary-pressed: 235 75% 62%;
 
-    --accent: 270 40% 70%;
-    --accent-foreground: 220 20% 10%;
-    --accent-soft: 270 30% 20%;
+    /* Accent */
+    --accent: 172 66% 55%;
+    --accent-foreground: 0 0% 100%;
+    --accent-soft: 172 40% 15%;
 
-    --background: 220 20% 10%;
-    --foreground: 220 14% 96%;
-    --card: 220 20% 13%;
-    --card-foreground: 220 14% 96%;
-    --popover: 220 20% 13%;
-    --popover-foreground: 220 14% 96%;
+    /* Background & Surfaces - Dark Mode */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 40% 98%;
 
-    --muted: 220 20% 18%;
-    --muted-foreground: 220 9% 60%;
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 220 14% 96%;
+    /* Muted & Secondary */
+    --muted: 222 47% 14%;
+    --muted-foreground: 215 20% 55%;
+    --secondary: 222 47% 12%;
+    --secondary-foreground: 210 40% 98%;
 
-    --border: 220 20% 20%;
-    --border-medium: 220 20% 28%;
-    --input: 220 20% 20%;
-    --ring: 231 100% 72%;
+    /* Borders & Inputs */
+    --border: 222 47% 18%;
+    --border-medium: 222 47% 25%;
+    --input: 222 47% 14%;
+    --ring: 235 85% 70%;
 
-    --success: 160 60% 45%;
-    --success-soft: 160 40% 15%;
+    /* Semantic Colors */
+    --success: 162 72% 50%;
+    --success-soft: 162 40% 12%;
     --warning: 38 80% 55%;
-    --destructive: 0 70% 50%;
+    --destructive: 0 70% 55%;
     --info: 217 80% 65%;
 
-    --flashcard: 220 20% 15%;
-    --flashcard-foreground: 220 14% 96%;
+    /* Special Surfaces */
+    --flashcard: 222 47% 12%;
+    --flashcard-foreground: 210 40% 98%;
 
-    --sidebar-background: 220 20% 10%;
-    --sidebar-foreground: 220 14% 96%;
-    --sidebar-primary: 231 100% 72%;
-    --sidebar-primary-foreground: 220 20% 10%;
-    --sidebar-accent: 220 20% 18%;
-    --sidebar-accent-foreground: 220 14% 96%;
-    --sidebar-border: 220 20% 20%;
-    --sidebar-ring: 231 100% 72%;
+    /* Glass Effect */
+    --glass-bg: 222 47% 9% / 0.85;
+    --glass-border: 222 47% 25% / 0.5;
+
+    /* Sidebar */
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 235 85% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 47% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222 47% 18%;
+    --sidebar-ring: 235 85% 70%;
   }
 }
 
@@ -120,41 +143,77 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01', 'ss03';
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 }
 
 @layer components {
-  /* Glint Input - Large, centered, calm */
+  /* Glass morphism container */
+  .glass {
+    @apply bg-card/80 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass-strong {
+    @apply bg-card/90 backdrop-blur-2xl border border-white/20;
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent;
+    background-size: 200% auto;
+  }
+
+  .gradient-text-accent {
+    @apply bg-gradient-to-r from-accent via-teal-400 to-accent bg-clip-text text-transparent;
+  }
+
+  /* Modern Input with glow effect */
   .glint-input {
-    @apply w-full px-6 py-5 text-lg bg-card border-2 border-border rounded-2xl
-           transition-all duration-200 ease-out
-           placeholder:text-muted-foreground/60
-           focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10
-           hover:border-border-medium;
+    @apply w-full px-6 py-5 text-lg bg-card/80 backdrop-blur-sm
+           border border-border rounded-2xl
+           transition-all duration-300 ease-out
+           placeholder:text-muted-foreground/50
+           focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10
+           focus:shadow-[0_0_30px_-5px_hsl(var(--primary)/0.3)]
+           hover:border-border-medium hover:bg-card;
   }
 
-  /* Primary CTA Button */
+  /* Primary CTA Button with gradient */
   .glint-button-primary {
-    @apply px-8 py-4 text-base font-semibold text-primary-foreground bg-primary
-           rounded-xl transition-all duration-200 ease-out
-           hover:bg-[hsl(var(--primary-hover))] hover:shadow-lg hover:shadow-primary/20
-           active:bg-[hsl(var(--primary-pressed))] active:scale-[0.98]
-           focus:outline-none focus:ring-4 focus:ring-primary/20
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply relative px-8 py-4 text-base font-semibold text-primary-foreground
+           bg-gradient-to-r from-primary to-[hsl(280_85%_65%)]
+           rounded-xl transition-all duration-300 ease-out
+           hover:shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.5)]
+           hover:translate-y-[-2px]
+           active:translate-y-0 active:scale-[0.98]
+           focus:outline-none focus:ring-4 focus:ring-primary/30
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0
+           overflow-hidden;
   }
 
-  /* Secondary Button */
+  .glint-button-primary::before {
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    content: '';
+    background: linear-gradient(to right, hsl(var(--primary-hover)), hsl(280 80% 72%));
+  }
+
+  .glint-button-primary:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Secondary Button - Glass style */
   .glint-button-secondary {
-    @apply px-6 py-3 text-base font-medium text-foreground bg-card
-           border-2 border-border rounded-xl transition-all duration-200 ease-out
-           hover:bg-muted hover:border-border-medium
-           active:scale-[0.98]
+    @apply px-6 py-3 text-base font-medium text-foreground
+           bg-card/60 backdrop-blur-sm
+           border border-border rounded-xl transition-all duration-300 ease-out
+           hover:bg-card hover:border-border-medium hover:translate-y-[-1px]
+           hover:shadow-soft
+           active:translate-y-0 active:scale-[0.98]
            focus:outline-none focus:ring-4 focus:ring-primary/10;
   }
 
@@ -162,41 +221,53 @@
   .glint-button-ghost {
     @apply px-4 py-2 text-sm font-medium text-muted-foreground
            rounded-lg transition-all duration-200 ease-out
-           hover:text-foreground hover:bg-muted
+           hover:text-foreground hover:bg-muted/50
            active:scale-[0.98];
   }
 
-  /* Success Button (Got it) */
+  /* Success Button with glow */
   .glint-button-success {
-    @apply px-6 py-3 text-base font-semibold text-success-foreground bg-success
-           rounded-xl transition-all duration-200 ease-out
-           hover:opacity-90 hover:shadow-lg hover:shadow-success/20
-           active:scale-[0.98];
+    @apply px-6 py-3 text-base font-semibold text-success-foreground
+           bg-gradient-to-r from-success to-[hsl(172_66%_45%)]
+           rounded-xl transition-all duration-300 ease-out
+           hover:shadow-[0_10px_40px_-10px_hsl(var(--success)/0.5)]
+           hover:translate-y-[-2px]
+           active:translate-y-0 active:scale-[0.98];
   }
 
-  /* Card Component */
+  /* Card with subtle gradient border */
   .glint-card {
-    @apply bg-card rounded-2xl border border-border p-6
-           shadow-sm transition-all duration-200
-           hover:shadow-md hover:border-border-medium;
+    @apply bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-6
+           shadow-sm transition-all duration-300
+           hover:shadow-medium hover:border-border-medium
+           hover:translate-y-[-2px];
   }
 
-  /* Flashcard */
+  /* Elevated card */
+  .glint-card-elevated {
+    @apply bg-card rounded-2xl border border-border p-6
+           shadow-elevated transition-all duration-300
+           hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.25)]
+           hover:translate-y-[-4px];
+  }
+
+  /* Flashcard with premium feel */
   .glint-flashcard {
-    @apply bg-flashcard rounded-3xl p-8 min-h-[300px]
-           shadow-lg border border-border
+    @apply bg-gradient-to-br from-flashcard to-card rounded-3xl p-8 min-h-[300px]
+           shadow-elevated border border-border
            flex items-center justify-center text-center
-           transition-all duration-300 ease-out;
+           transition-all duration-500 ease-out;
   }
 
   /* Tab Button */
   .glint-tab {
     @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
-           text-muted-foreground hover:text-foreground hover:bg-muted;
+           text-muted-foreground hover:text-foreground hover:bg-muted/50;
   }
 
   .glint-tab-active {
-    @apply bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground;
+    @apply bg-primary text-primary-foreground shadow-sm
+           hover:bg-primary hover:text-primary-foreground;
   }
 
   /* Progress Bar */
@@ -205,38 +276,98 @@
   }
 
   .glint-progress-bar {
-    @apply h-full bg-primary rounded-full transition-all duration-300 ease-out;
+    @apply h-full bg-gradient-to-r from-primary to-accent rounded-full 
+           transition-all duration-500 ease-out;
+  }
+
+  /* Animated gradient background */
+  .animated-gradient-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.1) 0%,
+      hsl(280 85% 65% / 0.05) 50%,
+      hsl(var(--accent) / 0.1) 100%
+    );
+    animation: gradient-shift 8s ease infinite;
+    background-size: 200% 200%;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 
   /* Subtle link underline animation */
   .glint-link {
     @apply relative inline-block text-primary font-medium
            after:content-[''] after:absolute after:w-full after:scale-x-0
-           after:h-0.5 after:bottom-0 after:left-0 after:bg-primary
-           after:origin-bottom-right after:transition-transform after:duration-200
+           after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r 
+           after:from-primary after:to-accent
+           after:origin-bottom-right after:transition-transform after:duration-300
            hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.4);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 40px -10px hsl(var(--accent) / 0.4);
+  }
+
+  /* Hero gradient orbs */
+  .hero-gradient-orb {
+    @apply absolute rounded-full blur-3xl opacity-30 animate-pulse;
+  }
+
+  /* Feature card with border gradient */
+  .feature-card {
+    @apply relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm
+           border border-border transition-all duration-300
+           hover:border-primary/30 hover:shadow-lg;
+  }
+
+  .feature-card::before {
+    content: '';
+    @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), transparent);
+  }
+
+  .feature-card:hover::before {
+    @apply opacity-100;
   }
 }
 
 @layer utilities {
-  /* Text utilities */
   .text-balance {
     text-wrap: balance;
   }
 
   /* Animation delays */
-  .animation-delay-100 {
-    animation-delay: 100ms;
-  }
-  .animation-delay-200 {
-    animation-delay: 200ms;
-  }
-  .animation-delay-300 {
-    animation-delay: 300ms;
-  }
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+  .animation-delay-700 { animation-delay: 700ms; }
 
   /* Skeleton loading */
   .skeleton {
-    @apply animate-pulse bg-muted rounded;
+    @apply animate-pulse bg-muted/50 rounded;
+  }
+
+  /* Perspective for 3D transforms */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  /* Preserve 3D for child elements */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  /* Backface hidden */
+  .backface-hidden {
+    backface-visibility: hidden;
   }
 }

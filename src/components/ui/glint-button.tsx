@@ -4,24 +4,26 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const glintButtonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 ease-out focus:outline-none disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-all duration-300 ease-out focus:outline-none disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/20 focus:ring-4 focus:ring-primary/20",
+          "bg-gradient-to-r from-primary to-purple-500 text-primary-foreground hover:shadow-glow-primary hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98] focus:ring-4 focus:ring-primary/30",
         secondary:
-          "bg-card text-foreground border-2 border-border hover:bg-muted hover:border-border-medium focus:ring-4 focus:ring-primary/10",
+          "bg-card/60 backdrop-blur-sm text-foreground border border-border hover:bg-card hover:border-border-medium hover:translate-y-[-1px] hover:shadow-soft active:translate-y-0 active:scale-[0.98] focus:ring-4 focus:ring-primary/10",
         ghost:
-          "text-muted-foreground hover:text-foreground hover:bg-muted",
+          "text-muted-foreground hover:text-foreground hover:bg-muted/50 active:scale-[0.98]",
         success:
-          "bg-success text-success-foreground hover:opacity-90 hover:shadow-lg hover:shadow-success/20",
+          "bg-gradient-to-r from-success to-teal-400 text-success-foreground hover:shadow-glow-success hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98]",
         danger:
-          "bg-destructive text-destructive-foreground hover:opacity-90",
+          "bg-destructive text-destructive-foreground hover:opacity-90 active:scale-[0.98]",
         accent:
-          "bg-accent text-accent-foreground hover:opacity-90",
+          "bg-gradient-to-r from-accent to-teal-400 text-accent-foreground hover:shadow-glow-accent hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98]",
         link:
-          "text-primary underline-offset-4 hover:underline p-0 h-auto",
+          "text-primary underline-offset-4 hover:underline p-0 h-auto font-medium",
+        outline:
+          "border-2 border-primary/50 text-primary bg-transparent hover:bg-primary/10 hover:border-primary active:scale-[0.98] focus:ring-4 focus:ring-primary/20",
       },
       size: {
         sm: "h-9 px-4 text-sm rounded-lg",
