@@ -28,22 +28,22 @@ export function RecentConcepts() {
             <ArrowRight className="h-4 w-4" />
           </GlintButton>
         </div>
-        <div className="grid gap-3">
+        <div className="grid gap-2 xs:gap-3">
           {savedConcepts.slice(0, 3).map((concept) => (
             <button
               key={concept.id}
               onClick={() => handleConceptClick(concept)}
-              className="glint-card text-left flex items-center justify-between group"
+              className="glint-card text-left flex items-center justify-between group p-3 xs:p-4 sm:p-5"
             >
-              <div>
-                <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+              <div className="min-w-0 flex-1 mr-2 xs:mr-3">
+                <p className="font-medium text-foreground text-xs xs:text-sm sm:text-base group-hover:text-primary transition-colors line-clamp-1">
                   {concept.topic}
                 </p>
-                <p className="text-caption text-muted-foreground">
+                <p className="text-[11px] xs:text-xs sm:text-caption text-muted-foreground mt-0.5">
                   {concept.flashcards.length} flashcards
                 </p>
               </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              <ArrowRight className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
             </button>
           ))}
         </div>

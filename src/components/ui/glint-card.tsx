@@ -25,8 +25,8 @@ const GlintCard = React.forwardRef<HTMLDivElement, GlintCardProps>(
             "bg-gradient-to-br from-flashcard to-card border border-border p-8 shadow-elevated rounded-3xl":
               variant === "flashcard",
             
-            // Concept card for library items
-            "bg-card/60 backdrop-blur-sm border border-border p-5 shadow-sm hover:shadow-card hover:border-border-medium hover:bg-card cursor-pointer hover:translate-y-[-2px]":
+            // Concept card for library items - responsive padding
+            "bg-card/60 backdrop-blur-sm border border-border p-3 xs:p-4 sm:p-5 shadow-sm hover:shadow-card hover:border-border-medium hover:bg-card cursor-pointer hover:translate-y-[-2px]":
               variant === "concept",
             
             // Glass morphism card
