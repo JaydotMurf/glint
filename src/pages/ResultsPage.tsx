@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
@@ -10,8 +10,9 @@ import { useAppStore } from "@/store/appStore";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Bookmark, Plus, Check, Layers, Loader2, Download, Lock, Library } from "lucide-react";
+import { Home, Library, Sparkles, Bookmark, Plus, Check, Layers, Loader2, Download, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type ExplanationLevel = "simplest" | "standard" | "deepDive";
 
@@ -78,34 +79,42 @@ const ResultsPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="w-full px-4 sm:px-6 py-4 flex items-center justify-between border-b border-border">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <GlintButton
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/")}
-            className="shrink-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </GlintButton>
+      {/* Header - matches HomeHeader pattern */}
+      <header className="w-full px-4 sm:px-6 py-4 flex items-center justify-between border-b border-border relative z-20">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <Link to="/" className="transition-transform hover:scale-105">
+            <Logo size="md" />
+          </Link>
           
-          {/* Back to Library - Mobile: icon only, Desktop: text */}
-          {user && (
-            <GlintButton
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/library")}
-              className="text-muted-foreground hover:text-foreground"
+          {/* Desktop Navigation - same pattern as HomeHeader */}
+          <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
+            <Link
+              to="/"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
             >
-              <Library className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Library</span>
-            </GlintButton>
-          )}
-          
-          <Logo size="sm" className="hidden sm:flex" />
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
+            {user && (
+              <Link
+                to="/library"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              >
+                <Library className="h-4 w-4" />
+                Library
+              </Link>
+            )}
+            <Link
+              to="/upgrade"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            >
+              <Sparkles className="h-4 w-4" />
+              Upgrade
+            </Link>
+          </nav>
         </div>
         
+        {/* Save Button */}
         <div className="flex items-center gap-2">
           <GlintButton
             variant={isSaved ? "ghost" : "secondary"}
@@ -133,8 +142,8 @@ const ResultsPage = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 px-6 py-8 overflow-auto">
+      {/* Main Content - extra bottom padding for mobile nav */}
+      <main className="flex-1 px-4 sm:px-6 py-8 pb-24 md:pb-8 overflow-auto">
         <div className="max-w-2xl mx-auto animate-fade-in">
           {/* Topic Title */}
           <div className="mb-8">

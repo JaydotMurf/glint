@@ -25,8 +25,8 @@ const MobileNav: React.FC = () => {
   const { user } = useAuth();
   const isMobile = useIsMobile();
 
-  // Don't show on non-mobile or on auth pages
-  const hideOnPaths = ["/login", "/signup", "/results", "/flashcards"];
+  // Don't show on non-mobile or on auth pages only
+  const hideOnPaths = ["/login", "/signup"];
   if (!isMobile || hideOnPaths.some(p => location.pathname.startsWith(p))) {
     return null;
   }
