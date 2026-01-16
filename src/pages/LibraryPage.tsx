@@ -88,13 +88,14 @@ const LibraryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
       {/* Header */}
-      <header className="w-full px-6 py-4 flex items-center gap-4 border-b border-border">
+      <header className="w-full px-4 sm:px-6 py-4 flex items-center gap-3 sm:gap-4 border-b border-border">
         <GlintButton
           variant="ghost"
           size="icon"
           onClick={() => navigate("/")}
+          className="shrink-0"
         >
           <ArrowLeft className="h-5 w-5" />
         </GlintButton>
@@ -102,14 +103,14 @@ const LibraryPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-6 py-8 overflow-auto">
-        <div className="max-w-2xl mx-auto">
+      <main className="flex-1 px-4 sm:px-6 py-6 sm:py-8 overflow-auto">
+        <div className="max-w-2xl mx-auto w-full">
           {/* Title */}
-          <div className="mb-8 animate-fade-in">
-            <h1 className="text-display text-foreground mb-2">
+          <div className="mb-6 sm:mb-8 animate-fade-in">
+            <h1 className="text-2xl sm:text-display text-foreground mb-2">
               Saved Concepts
             </h1>
-            <p className="text-body text-muted-foreground">
+            <p className="text-sm sm:text-body text-muted-foreground">
               {isLoading ? "Loading..." : `${concepts.length} concept${concepts.length !== 1 ? "s" : ""} saved`}
             </p>
           </div>
@@ -118,7 +119,7 @@ const LibraryPage = () => {
           {showUpgradeBanner && (
             <UpgradeBanner 
               message="You're building a great study library! Upgrade to Premium for PDF exports and spaced repetition reminders."
-              className="mb-6 animate-fade-in"
+              className="mb-4 sm:mb-6 animate-fade-in"
             />
           )}
 
@@ -131,14 +132,14 @@ const LibraryPage = () => {
 
           {/* Search */}
           {!isLoading && concepts.length > 0 && (
-            <div className="relative mb-6 animate-fade-in animation-delay-100">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="relative mb-4 sm:mb-6 animate-fade-in animation-delay-100">
+              <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search concepts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-card border border-border rounded-xl text-body
+                className="w-full pl-10 sm:pl-11 pr-4 py-3 bg-card border border-border rounded-xl text-sm sm:text-body
                          placeholder:text-muted-foreground focus:outline-none focus:border-primary
                          focus:ring-4 focus:ring-primary/10 transition-all duration-200"
               />
@@ -152,33 +153,34 @@ const LibraryPage = () => {
                 <GlintCard
                   key={concept.id}
                   variant="concept"
-                  className="group"
+                  className="group w-full"
                   onClick={() => handleOpenConcept(concept.id)}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                      <h3 className="font-medium text-foreground text-sm sm:text-base line-clamp-2 sm:truncate group-hover:text-primary transition-colors">
                         {concept.topic}
                       </h3>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-caption text-muted-foreground">
+                        <span className="text-xs sm:text-caption text-muted-foreground">
                           {formatDate(concept.created_at)}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <GlintButton
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleReview(e, concept.id)}
+                        className="text-xs sm:text-sm"
                       >
                         <BookOpen className="h-4 w-4" />
-                        Review
+                        <span className="hidden xs:inline sm:inline">Review</span>
                       </GlintButton>
                       <GlintButton
                         variant="ghost"
                         size="icon"
-                        className="text-muted-foreground hover:text-destructive"
+                        className="text-muted-foreground hover:text-destructive shrink-0"
                         onClick={(e) => handleDelete(e, concept.id)}
                         disabled={deletingId === concept.id}
                       >
