@@ -156,38 +156,38 @@ const LibraryPage = () => {
                   className="group w-full"
                   onClick={() => handleOpenConcept(concept.id)}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 xs:gap-3">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-foreground text-sm sm:text-base line-clamp-2 sm:truncate group-hover:text-primary transition-colors">
+                      <h3 className="font-medium text-foreground text-xs xs:text-sm sm:text-base line-clamp-2 xs:line-clamp-1 sm:truncate group-hover:text-primary transition-colors">
                         {concept.topic}
                       </h3>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs sm:text-caption text-muted-foreground">
+                      <div className="flex items-center gap-2 xs:gap-3 mt-0.5 xs:mt-1">
+                        <span className="text-[11px] xs:text-xs sm:text-caption text-muted-foreground">
                           {formatDate(concept.created_at)}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1 xs:gap-2 shrink-0">
                       <GlintButton
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleReview(e, concept.id)}
-                        className="text-xs sm:text-sm"
+                        className="text-[11px] xs:text-xs sm:text-sm h-7 xs:h-8 sm:h-9 px-2 xs:px-3"
                       >
-                        <BookOpen className="h-4 w-4" />
-                        <span className="hidden xs:inline sm:inline">Review</span>
+                        <BookOpen className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                        <span className="hidden xs:inline">Review</span>
                       </GlintButton>
                       <GlintButton
                         variant="ghost"
                         size="icon"
-                        className="text-muted-foreground hover:text-destructive shrink-0"
+                        className="text-muted-foreground hover:text-destructive shrink-0 h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9"
                         onClick={(e) => handleDelete(e, concept.id)}
                         disabled={deletingId === concept.id}
                       >
                         {deletingId === concept.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Loader2 className="h-3.5 w-3.5 xs:h-4 xs:w-4 animate-spin" />
                         ) : (
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
                         )}
                       </GlintButton>
                     </div>
