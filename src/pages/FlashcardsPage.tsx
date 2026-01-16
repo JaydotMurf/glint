@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintProgress } from "@/components/ui/glint-progress";
@@ -11,7 +11,7 @@ import { useAppStore } from "@/store/appStore";
 import { useFlashcards } from "@/hooks/useFlashcards";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Check, RotateCcw, PartyPopper, Home, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, Library, Sparkles, Check, RotateCcw, PartyPopper, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { generateFlashcards as generateFlashcardsAI } from "@/lib/ai";
 import { toast } from "sonner";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
@@ -251,13 +251,24 @@ const FlashcardsPage = () => {
 
   if (loadingDbFlashcards) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <header className="w-full px-6 py-4 flex items-center justify-between border-b border-border">
-          <div className="flex items-center gap-4">
-            <GlintButton variant="ghost" size="icon" onClick={() => navigate("/results")} aria-label="Go back">
-              <ArrowLeft className="h-5 w-5" />
-            </GlintButton>
-            <Logo size="sm" />
+      <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0">
+        <header className="w-full px-4 sm:px-6 py-4 flex items-center justify-between border-b border-border">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link to="/" className="transition-transform hover:scale-105">
+              <Logo size="md" />
+            </Link>
+            <nav className="hidden md:flex items-center gap-1">
+              <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50">
+                <Home className="h-4 w-4" />
+                Home
+              </Link>
+              {user && (
+                <Link to="/library" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50">
+                  <Library className="h-4 w-4" />
+                  Library
+                </Link>
+              )}
+            </nav>
           </div>
         </header>
         <main className="flex-1 flex items-center justify-center px-6 py-8" role="main">
@@ -381,19 +392,40 @@ const FlashcardsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="w-full px-6 py-4 flex items-center justify-between border-b border-border">
-        <div className="flex items-center gap-4">
-          <GlintButton
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/results")}
-            aria-label="Go back to results"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </GlintButton>
-          <Logo size="sm" />
+    <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0">
+      {/* Header - matches HomeHeader pattern */}
+      <header className="w-full px-4 sm:px-6 py-4 flex items-center justify-between border-b border-border relative z-20">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <Link to="/" className="transition-transform hover:scale-105">
+            <Logo size="md" />
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
+            <Link
+              to="/"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
+            {user && (
+              <Link
+                to="/library"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              >
+                <Library className="h-4 w-4" />
+                Library
+              </Link>
+            )}
+            <Link
+              to="/upgrade"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            >
+              <Sparkles className="h-4 w-4" />
+              Upgrade
+            </Link>
+          </nav>
         </div>
         <span className="text-caption font-medium text-muted-foreground" aria-live="polite">
           {progress} of {flashcards.length}
