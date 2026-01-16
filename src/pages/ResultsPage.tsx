@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
@@ -152,9 +153,11 @@ const ResultsPage = () => {
                 {activeLevel === "deepDive" && "Deep Dive"}
               </span>
             </div>
-            <p className="text-body-lg text-foreground leading-relaxed">
-              {currentConcept.explanations[activeLevel]}
-            </p>
+            <div className="text-body-lg text-foreground leading-relaxed prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-strong:text-foreground prose-em:text-foreground/90">
+              <ReactMarkdown>
+                {currentConcept.explanations[activeLevel]}
+              </ReactMarkdown>
+            </div>
           </GlintCard>
 
           {/* Helper Text */}
