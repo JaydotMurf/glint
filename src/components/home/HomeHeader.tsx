@@ -8,14 +8,14 @@ export function HomeHeader() {
   const { user, loading } = useAuth();
 
   return (
-    <header className="w-full px-6 py-4 flex items-center justify-between">
-      <Link to="/">
-        <Logo size="md" showIcon={false} />
+    <header className="w-full px-6 py-4 flex items-center justify-between relative z-20">
+      <Link to="/" className="transition-transform hover:scale-105">
+        <Logo size="md" />
       </Link>
       
       <div className="flex items-center gap-3">
         {loading ? (
-          <div className="h-9 w-20 bg-muted animate-pulse rounded-lg" />
+          <div className="h-9 w-20 bg-muted/50 animate-pulse rounded-xl" />
         ) : user ? (
           <UserMenu />
         ) : (
@@ -24,7 +24,7 @@ export function HomeHeader() {
               <GlintButton
                 variant="ghost"
                 size="sm"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-foreground hover:text-primary"
               >
                 Log in
               </GlintButton>
