@@ -5,10 +5,38 @@ export default {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
+    // Content-driven breakpoints for Glint
+    // xs: Extra small mobile (portrait) - base
+    // sm: Small mobile (landscape) / large phones
+    // md: Tablets (portrait)
+    // lg: Tablets (landscape) / small laptops
+    // xl: Laptops / small desktops
+    // 2xl: Large desktops and monitors
+    screens: {
+      xs: "480px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1440px",
+    },
     container: {
       center: true,
-      padding: "1.5rem",
+      padding: {
+        DEFAULT: "1rem",
+        xs: "1rem",
+        sm: "1.5rem",
+        md: "2rem",
+        lg: "2rem",
+        xl: "2rem",
+        "2xl": "2rem",
+      },
       screens: {
+        xs: "100%",
+        sm: "100%",
+        md: "100%",
+        lg: "1024px",
+        xl: "1200px",
         "2xl": "1200px",
       },
     },
