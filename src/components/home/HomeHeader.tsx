@@ -3,6 +3,7 @@ import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { UserMenu } from "@/components/home/UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
+import { Library } from "lucide-react";
 
 export function HomeHeader() {
   const { user, loading } = useAuth();
@@ -17,7 +18,19 @@ export function HomeHeader() {
         {loading ? (
           <div className="h-9 w-20 bg-muted/50 animate-pulse rounded-xl" />
         ) : user ? (
-          <UserMenu />
+          <>
+            <Link to="/library">
+              <GlintButton
+                variant="ghost"
+                size="sm"
+                className="text-foreground hover:text-primary"
+                aria-label="My Library"
+              >
+                <Library className="h-5 w-5" />
+              </GlintButton>
+            </Link>
+            <UserMenu />
+          </>
         ) : (
           <>
             <Link to="/login">
