@@ -10,7 +10,7 @@ import { useAppStore } from "@/store/appStore";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Bookmark, Plus, Check, Layers, Loader2, Download, Lock } from "lucide-react";
+import { ArrowLeft, Bookmark, Plus, Check, Layers, Loader2, Download, Lock, Library } from "lucide-react";
 import { toast } from "sonner";
 
 type ExplanationLevel = "simplest" | "standard" | "deepDive";
@@ -79,40 +79,58 @@ const ResultsPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="w-full px-6 py-4 flex items-center justify-between border-b border-border">
-        <div className="flex items-center gap-4">
+      <header className="w-full px-4 sm:px-6 py-4 flex items-center justify-between border-b border-border">
+        <div className="flex items-center gap-2 sm:gap-4">
           <GlintButton
             variant="ghost"
             size="icon"
             onClick={() => navigate("/")}
+            className="shrink-0"
           >
             <ArrowLeft className="h-5 w-5" />
           </GlintButton>
-          <Logo size="sm" />
-        </div>
-        <GlintButton
-          variant={isSaved ? "ghost" : "secondary"}
-          size="sm"
-          onClick={handleSave}
-          disabled={isSaved || saveConcept.isPending}
-        >
-          {saveConcept.isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : isSaved ? (
-            <>
-              <Check className="h-4 w-4" />
-              Saved
-            </>
-          ) : (
-            <>
-              <Bookmark className="h-4 w-4" />
-              Save
-            </>
+          
+          {/* Back to Library - Mobile: icon only, Desktop: text */}
+          {user && (
+            <GlintButton
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/library")}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Library className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Library</span>
+            </GlintButton>
           )}
-        </GlintButton>
+          
+          <Logo size="sm" className="hidden sm:flex" />
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <GlintButton
+            variant={isSaved ? "ghost" : "secondary"}
+            size="sm"
+            onClick={handleSave}
+            disabled={isSaved || saveConcept.isPending}
+          >
+            {saveConcept.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="hidden sm:inline ml-1">Saving...</span>
+              </>
+            ) : isSaved ? (
+              <>
+                <Check className="h-4 w-4" />
+                <span className="hidden sm:inline ml-1">Saved</span>
+              </>
+            ) : (
+              <>
+                <Bookmark className="h-4 w-4" />
+                <span className="hidden sm:inline ml-1">Save</span>
+              </>
+            )}
+          </GlintButton>
+        </div>
       </header>
 
       {/* Main Content */}
