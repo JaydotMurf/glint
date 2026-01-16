@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
+import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
 import { GlintTabs } from "@/components/ui/glint-tabs";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import { ExplanationContent } from "@/components/ExplanationContent";
 import { useAppStore } from "@/store/appStore";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { useAuth } from "@/contexts/AuthContext";
 import { Home, Library, Sparkles, Bookmark, Plus, Check, Layers, Loader2, Download, Lock } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 type ExplanationLevel = "simplest" | "standard" | "deepDive";
 
@@ -163,28 +162,11 @@ const ResultsPage = () => {
           </div>
 
           {/* Explanation Card */}
-          <GlintCard variant="elevated" className="mb-8 animate-fade-in">
-            <div className="flex items-center gap-2 mb-4">
-              {activeLevel === "simplest" && (
-                <span className="text-2xl">🧩</span>
-              )}
-              {activeLevel === "standard" && (
-                <span className="text-2xl">📚</span>
-              )}
-              {activeLevel === "deepDive" && (
-                <span className="text-2xl">🔬</span>
-              )}
-              <span className="text-caption font-medium text-muted-foreground uppercase tracking-wide">
-                {activeLevel === "simplest" && "Simplest Explanation"}
-                {activeLevel === "standard" && "Standard Explanation"}
-                {activeLevel === "deepDive" && "Deep Dive"}
-              </span>
-            </div>
-            <div className="text-body-lg text-foreground leading-relaxed prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-strong:text-foreground prose-em:text-foreground/90">
-              <ReactMarkdown>
-                {currentConcept.explanations[activeLevel]}
-              </ReactMarkdown>
-            </div>
+          <GlintCard variant="elevated" className="mb-6 xs:mb-8 animate-fade-in">
+            <ExplanationContent 
+              content={currentConcept.explanations[activeLevel]} 
+              level={activeLevel} 
+            />
           </GlintCard>
 
           {/* Helper Text */}
