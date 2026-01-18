@@ -201,7 +201,7 @@ const handleUpgrade = async () => {
 
 ---
 
-### Task 6.2: Google OAuth Social Login ⬜
+### Task 6.2: Google OAuth Social Login ✅
 **Priority**: 🟡 High  
 **Dependencies**: None  
 **Estimated Effort**: 30 minutes
@@ -209,9 +209,9 @@ const handleUpgrade = async () => {
 Add "Sign in with Google" for faster onboarding.
 
 **Subtasks**:
-- [ ] 6.2.1 Configure Google OAuth in Lovable Cloud dashboard
-- [ ] 6.2.2 Add Google sign-in button to Login/Signup pages
-- [ ] 6.2.3 Handle OAuth callback and profile creation
+- [x] 6.2.1 Configure Google OAuth in Lovable Cloud dashboard (built-in support)
+- [x] 6.2.2 Add Google sign-in button to Login/Signup pages
+- [x] 6.2.3 Handle OAuth callback and profile creation (automatic via Supabase Auth)
 
 **Implementation Notes**:
 Lovable Cloud has built-in Google OAuth support. Configure via:
