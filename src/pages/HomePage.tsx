@@ -56,7 +56,11 @@ const HomePage = () => {
       
       // Record streak activity for logged-in users
       if (user) {
-        recordActivity();
+        try {
+          await recordActivity();
+        } catch (err) {
+          console.error("Failed to record streak activity:", err);
+        }
       }
       
       navigate("/results");
