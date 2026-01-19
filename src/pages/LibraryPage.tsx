@@ -3,6 +3,7 @@ import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
 import { UpgradeBanner } from "@/components/UpgradeBanner";
+import Footer from "@/components/Footer";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { useAppStore } from "@/store/appStore";
@@ -223,6 +224,8 @@ const LibraryPage = () => {
           ) : null}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

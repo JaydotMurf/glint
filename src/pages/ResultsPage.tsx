@@ -6,6 +6,7 @@ import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
 import { GlintTabs } from "@/components/ui/glint-tabs";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import Footer from "@/components/Footer";
 import { useAppStore } from "@/store/appStore";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
@@ -243,7 +244,7 @@ const ResultsPage = () => {
         </div>
       </main>
 
-      {/* Upgrade Modal */}
+      <Footer />
       <UpgradeModal 
         open={showUpgradeModal} 
         onOpenChange={setShowUpgradeModal}
