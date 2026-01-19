@@ -365,14 +365,20 @@
     border-left: 4px solid hsl(199 89% 48%);
   }
 
-  /* Indigo Step Badge */
+  /* Indigo Step Badge - 24px rounded squares */
   .step-badge {
-    @apply flex-shrink-0 flex items-center justify-center rounded-md font-semibold;
+    @apply flex-shrink-0 flex items-center justify-center rounded-md font-semibold transition-all;
     width: 24px;
     height: 24px;
     font-size: 12px;
-    background-color: hsl(226 100% 97%);
-    color: hsl(243 75% 59%);
+    background-color: #EEF2FF; /* indigo-50 */
+    color: #4338CA; /* indigo-700 */
+  }
+
+  .step-badge:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.35);
+    outline: none;
   }
 
   .dark .step-badge {

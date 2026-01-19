@@ -19,7 +19,10 @@ interface ParsedContent {
 
 /**
  * Parses explanation content to extract numbered steps and key takeaways.
- * Looks for patterns like "1. **Step Title** - Description" or numbered lists.
+ * Handles multiple formats:
+ * - "1. **Step Title** - Description"
+ * - "First, ...", "Second, ...", "Third, ..."
+ * - "1. Simple step text"
  */
 function parseExplanation(content: string): ParsedContent {
   const lines = content.split("\n");
@@ -34,11 +37,16 @@ function parseExplanation(content: string): ParsedContent {
   const stepRegex = /^(\d+)\.\s*\*?\*?([^*\-:]+)\*?\*?\s*[\-:]\s*(.+)$/;
   const simpleStepRegex = /^(\d+)\.\s+(.+)$/;
   
+  // Ordinal word patterns: "First, ...", "Second, ...", etc.
+  const ordinalRegex = /^(?:\*\*)?(first|second|third|finally|next|then|lastly)(?:\*\*)?,?\s+(.+)$/i;
+  
   // Check for "Key Takeaway" or summary at the end
   const takeawayIndicators = [
     /^(?:\*\*)?(?:key\s*takeaway|takeaway|in\s*short|in\s*summary|to\s*summarize|bottom\s*line|tldr|tl;dr)(?:\*\*)?[:\s]/i,
-    /^(?:\*\*)?(?:remember|the\s*key\s*point|most\s*importantly)(?:\*\*)?[:\s]/i
+    /^(?:\*\*)?(?:remember|the\s*key\s*point|most\s*importantly|now\s*you\s*can\s*say)(?:\*\*)?[:\s]/i
   ];
+
+  let ordinalCounter = 0;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -52,8 +60,12 @@ function parseExplanation(content: string): ParsedContent {
     // Check for key takeaway
     const isTakeaway = takeawayIndicators.some(regex => regex.test(line));
     if (isTakeaway) {
-      // Extract the takeaway content
-      const takeawayContent = line.replace(takeawayIndicators[0], "").replace(takeawayIndicators[1], "").trim();
+      // Extract the takeaway content - remove the indicator text
+      let takeawayContent = line;
+      for (const regex of takeawayIndicators) {
+        takeawayContent = takeawayContent.replace(regex, "").trim();
+      }
+      // If there's remaining content after the indicator, use it; otherwise combine remaining lines
       keyTakeaway = takeawayContent || lines.slice(i + 1).join(" ").trim();
       break;
     }
@@ -63,6 +75,9 @@ function parseExplanation(content: string): ParsedContent {
     if (!stepMatch) {
       stepMatch = line.match(simpleStepRegex);
     }
+    
+    // Check for ordinal word step
+    const ordinalMatch = line.match(ordinalRegex);
 
     if (stepMatch) {
       inSteps = true;
@@ -88,6 +103,25 @@ function parseExplanation(content: string): ParsedContent {
             description: ""
           });
         }
+      }
+    } else if (ordinalMatch) {
+      inSteps = true;
+      ordinalCounter++;
+      const ordinalWord = ordinalMatch[1];
+      const content = ordinalMatch[2].trim();
+      
+      // Try to extract a "title" portion (first clause before comma or period)
+      const clauseMatch = content.match(/^([^,.]+)[,.]?\s*(.*)$/);
+      if (clauseMatch && clauseMatch[2]) {
+        steps.push({
+          title: clauseMatch[1].trim().replace(/\*\*/g, ""),
+          description: clauseMatch[2].trim()
+        });
+      } else {
+        steps.push({
+          title: content.replace(/\*\*/g, ""),
+          description: ""
+        });
       }
     } else if (!inSteps) {
       // Before steps - this is intro
@@ -116,6 +150,7 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
     const config = levelConfig[level];
 
     // If we can't parse structured content, fall back to simple markdown rendering
+    // But ALWAYS show Key Takeaway box if detected
     if (!hasStructuredContent) {
       return (
         <div
@@ -124,10 +159,11 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
             "bg-card rounded-xl border border-border p-5 md:p-6",
             className
           )}
+          style={{ maxWidth: "680px", margin: "0 auto" }}
           {...props}
         >
           {/* Header */}
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
             <span className="text-2xl">{config.icon}</span>
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               {config.label}
@@ -135,11 +171,11 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
           </div>
 
           {/* Content with enhanced typography */}
-          <div className="text-reading-dark prose prose-neutral dark:prose-invert max-w-none prose-p:my-2 prose-strong:text-foreground prose-em:text-foreground/90">
-            <ReactMarkdown>{content}</ReactMarkdown>
+          <div className="text-reading prose prose-neutral dark:prose-invert max-w-none prose-p:my-3 prose-strong:text-foreground prose-em:text-foreground/90">
+            <ReactMarkdown>{parsed.keyTakeaway ? content.replace(/(?:remember|now you can say)[:\s].*/is, "") : content}</ReactMarkdown>
           </div>
 
-          {/* Key Takeaway if found */}
+          {/* Key Takeaway Box - always show if found */}
           {parsed.keyTakeaway && (
             <div className="key-takeaway mt-6">
               <div className="flex items-center gap-2 mb-2">
@@ -148,7 +184,7 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
                   Key Takeaway
                 </span>
               </div>
-              <p className="text-reading-dark font-medium">
+              <p className="text-reading font-medium text-foreground">
                 {parsed.keyTakeaway}
               </p>
             </div>
