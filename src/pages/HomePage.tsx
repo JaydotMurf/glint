@@ -56,11 +56,15 @@ const HomePage = () => {
       
       // Record streak activity for logged-in users
       if (user) {
+        console.log("[HomePage] User authenticated, recording streak activity...");
         try {
-          await recordActivity();
+          const result = await recordActivity();
+          console.log("[HomePage] Streak recorded successfully:", result);
         } catch (err) {
-          console.error("Failed to record streak activity:", err);
+          console.error("[HomePage] Failed to record streak activity:", err);
         }
+      } else {
+        console.log("[HomePage] User not authenticated, skipping streak recording");
       }
       
       navigate("/results");
