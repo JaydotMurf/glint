@@ -68,6 +68,7 @@ export default function SignupPage() {
             </span>
           </div>
 
+          {/* Google Sign In */}
           <GoogleSignInButton />
           
           <div className="relative my-6">

@@ -7,7 +7,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { MotionProvider } from "@/contexts/MotionContext";
 import { SkipToContent } from "@/components/SkipToContent";
 import { MobileNav } from "@/components/MobileNav";
-import { StreakMilestoneModal } from "@/components/StreakMilestoneModal";
 import HomePage from "./pages/HomePage";
 import ResultsPage from "./pages/ResultsPage";
 import FlashcardsPage from "./pages/FlashcardsPage";
@@ -51,7 +50,6 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
             <MobileNav />
-            <StreakMilestoneModal />
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

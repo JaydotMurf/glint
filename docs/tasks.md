@@ -255,7 +255,7 @@ export function GoogleSignInButton() {
 
 ---
 
-### Task 6.3: Study Streak Tracking ✅
+### Task 6.3: Study Streak Tracking ⬜
 **Priority**: 🟡 High  
 **Dependencies**: None  
 **Estimated Effort**: 2 hours
@@ -263,11 +263,11 @@ export function GoogleSignInButton() {
 Gamify learning with daily streaks to boost retention.
 
 **Subtasks**:
-- [x] 6.3.1 Add streak columns to profiles table
-- [x] 6.3.2 Create streak tracking hook
-- [x] 6.3.3 Update streak on explanation/flashcard activity
-- [x] 6.3.4 Display streak badge in header
-- [x] 6.3.5 Add streak milestone celebrations (7, 30, 100 days)
+- [ ] 6.3.1 Add streak columns to profiles table
+- [ ] 6.3.2 Create streak tracking hook
+- [ ] 6.3.3 Update streak on explanation/flashcard activity
+- [ ] 6.3.4 Display streak badge in header
+- [ ] 6.3.5 Add streak milestone celebrations (7, 30, 100 days)
 
 **Database Migration**:
 ```sql

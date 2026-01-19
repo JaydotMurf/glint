@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { UserMenu } from "@/components/home/UserMenu";
-import { StreakBadge } from "@/components/StreakBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Home, Library, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -62,10 +61,7 @@ export function HomeHeader() {
         {loading ? (
           <div className="h-9 w-20 bg-muted/50 animate-pulse rounded-xl" />
         ) : user ? (
-          <>
-            <StreakBadge />
-            <UserMenu />
-          </>
+          <UserMenu />
         ) : (
           <>
             <Link to="/login">

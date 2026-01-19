@@ -8,8 +8,6 @@ import { GenerationProgress } from "@/components/GenerationProgress";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { useAppStore } from "@/store/appStore";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
-import { useStreak } from "@/hooks/useStreak";
-import { useAuth } from "@/contexts/AuthContext";
 import { generateExplanation } from "@/lib/ai";
 import { Sparkles, Zap, BookOpen, Brain } from "lucide-react";
 import { toast } from "sonner";
@@ -35,9 +33,6 @@ const HomePage = () => {
     FREE_DAILY_LIMIT,
   } = useUsageLimit();
 
-  const { user } = useAuth();
-  const { recordActivity } = useStreak();
-
   const handleSubmit = async (topic: string) => {
     if (!topic.trim() || isGenerating) return;
 
@@ -53,12 +48,6 @@ const HomePage = () => {
       const concept = await generateExplanation(topic.trim());
       setCurrentConcept(concept);
       await incrementUsage.mutateAsync();
-      
-      // Record streak activity for logged-in users
-      if (user) {
-        recordActivity();
-      }
-      
       navigate("/results");
     } catch (error) {
       console.error("Failed to generate explanation:", error);

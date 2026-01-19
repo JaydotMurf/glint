@@ -55,6 +55,7 @@ export default function LoginPage() {
         </div>
 
         <GlintCard className="p-6" variant="elevated">
+          {/* Google Sign In */}
           <GoogleSignInButton />
           
           <div className="relative my-6">
