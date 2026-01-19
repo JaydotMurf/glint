@@ -39,15 +39,13 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
           </span>
         </div>
 
-        {/* Lead / Intro */}
-        {parsed.intro && (
-          <div className="lead-statement mb-6">
-            <ReactMarkdown>{parsed.intro}</ReactMarkdown>
-          </div>
-        )}
+        {/* Lead / Intro - main explanation content */}
+        <div className="text-reading mb-6">
+          <ReactMarkdown>{parsed.intro || content}</ReactMarkdown>
+        </div>
 
-        {/* Steps OR plain markdown */}
-        {hasStructuredContent ? (
+        {/* Steps - only show if structured content detected */}
+        {hasStructuredContent && (
           <ol className="space-y-3.5 mb-6">
             {parsed.steps.map((step, index) => (
               <li key={index} className="flex items-start gap-3">
@@ -63,10 +61,6 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
               </li>
             ))}
           </ol>
-        ) : (
-          <div className="text-reading">
-            <ReactMarkdown>{content}</ReactMarkdown>
-          </div>
         )}
 
         {/* Remainder - only show if we had structured steps */}
