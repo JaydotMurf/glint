@@ -6,6 +6,7 @@ import { AuthNudge } from "@/components/home/AuthNudge";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GenerationProgress } from "@/components/GenerationProgress";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import Footer from "@/components/Footer";
 import { useAppStore } from "@/store/appStore";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
 import { generateExplanation } from "@/lib/ai";
@@ -277,6 +278,8 @@ const HomePage = () => {
 
         {/* Recent Concepts */}
         <RecentConcepts />
+
+        <Footer />
       </div>
 
       {/* Upgrade Modal */}

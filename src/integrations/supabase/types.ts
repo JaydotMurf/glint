@@ -61,31 +61,40 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          current_streak: number | null
           daily_usage_count: number | null
           display_name: string | null
           email: string | null
           id: string
+          last_activity_date: string | null
           last_usage_date: string | null
+          longest_streak: number | null
           plan_type: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          current_streak?: number | null
           daily_usage_count?: number | null
           display_name?: string | null
           email?: string | null
           id: string
+          last_activity_date?: string | null
           last_usage_date?: string | null
+          longest_streak?: number | null
           plan_type?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          current_streak?: number | null
           daily_usage_count?: number | null
           display_name?: string | null
           email?: string | null
           id?: string
+          last_activity_date?: string | null
           last_usage_date?: string | null
+          longest_streak?: number | null
           plan_type?: string | null
           updated_at?: string | null
         }
@@ -132,7 +141,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_user_streak: { Args: { p_user_id: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

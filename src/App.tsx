@@ -14,6 +14,8 @@ import LibraryPage from "./pages/LibraryPage";
 import UpgradePage from "./pages/UpgradePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -36,6 +38,8 @@ const App = () => (
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/flashcards" element={<FlashcardsPage />} />
               <Route path="/upgrade" element={<UpgradePage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
               
               {/* Protected routes (require auth for saving) */}
               <Route 
