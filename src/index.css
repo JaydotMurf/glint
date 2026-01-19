@@ -339,45 +339,72 @@
   }
 }
 
+
 /* Enhanced Reading Typography */
 @layer components {
   .text-reading {
     font-size: 17px;
     line-height: 1.75;
-    color: hsl(215 16% 47%);
+    color: hsl(215 16% 47%) !important;
   }
-  
+
   .text-reading-dark {
     font-size: 17px;
     line-height: 1.75;
-    color: hsl(215 25% 27%);
+    color: hsl(215 25% 27%) !important;
+  }
+
+  /* Lead statement (used by EnhancedExplanation) */
+  .lead-statement {
+    font-size: 18px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+  }
+
+  /* Key term highlight underline */
+  .lead-statement strong {
+    font-weight: 600;
+    background: linear-gradient(
+      180deg,
+      transparent 60%,
+      hsl(199 93% 60% / 0.22) 60%
+    );
   }
 
   /* Key Takeaway Box */
   .key-takeaway {
     @apply relative pl-5 py-4 pr-5 rounded-lg;
     background: linear-gradient(to right, hsl(199 89% 96%), hsl(210 40% 98%));
-    border-left: 4px solid hsl(199 89% 48%);
+    border-left: 4px solid hsl(199 93% 60%);
+  }
+
+  .key-takeaway__icon {
+    color: hsl(199 93% 60%);
+  }
+
+  .key-takeaway__label {
+    color: hsl(199 89% 40%);
   }
 
   .dark .key-takeaway {
     background: linear-gradient(to right, hsl(199 40% 12%), hsl(210 40% 10%));
-    border-left: 4px solid hsl(199 89% 48%);
+    border-left: 4px solid hsl(199 93% 60%);
   }
 
   /* Indigo Step Badge - 24px rounded squares */
   .step-badge {
-    @apply flex-shrink-0 flex items-center justify-center rounded-md font-semibold transition-all;
+    @apply flex-shrink-0 inline-flex items-center justify-center rounded-md font-semibold transition-all;
     width: 24px;
     height: 24px;
     font-size: 12px;
-    background-color: #EEF2FF; /* indigo-50 */
-    color: #4338CA; /* indigo-700 */
+    background-color: hsl(226 100% 97%);
+    color: hsl(244 55% 51%);
   }
 
   .step-badge:focus-visible {
     transform: translateY(-1px);
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 0 0 2px hsl(244 55% 51% / 0.35);
     outline: none;
   }
 
@@ -386,6 +413,7 @@
     color: hsl(243 80% 75%);
   }
 }
+
 
 @layer utilities {
   .text-balance {
