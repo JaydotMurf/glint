@@ -40,13 +40,19 @@ export function useStreak() {
 
   const recordActivity = useMutation({
     mutationFn: async () => {
+      console.log("[Streak] Recording activity for user:", user?.id);
       const { data, error } = await supabase.rpc("update_user_streak", {
         p_user_id: user!.id
       });
-      if (error) throw error;
+      if (error) {
+        console.error("[Streak] RPC error:", error);
+        throw error;
+      }
+      console.log("[Streak] RPC result:", data);
       return data as unknown as StreakUpdateResult;
     },
     onSuccess: (result) => {
+      console.log("[Streak] onSuccess:", result);
       queryClient.invalidateQueries({ queryKey: ["streak", user?.id] });
       
       // Check for milestone achievements
@@ -56,6 +62,9 @@ export function useStreak() {
           setPendingMilestone(hitMilestone);
         }
       }
+    },
+    onError: (error) => {
+      console.error("[Streak] Mutation error:", error);
     },
   });
 
@@ -74,7 +83,7 @@ export function useStreak() {
     longestStreak: streakData?.longest_streak ?? 0,
     lastActivity: streakData?.last_activity_date,
     isLoading,
-    recordActivity: recordActivity.mutate,
+    recordActivity: recordActivity.mutateAsync,
     isRecording: recordActivity.isPending,
     pendingMilestone,
     clearMilestone,
