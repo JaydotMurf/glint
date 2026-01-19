@@ -7,7 +7,6 @@ import { Flashcard } from "@/components/Flashcard";
 import { GenerationProgress } from "@/components/GenerationProgress";
 import { FlashcardSkeleton } from "@/components/FlashcardSkeleton";
 import { Confetti } from "@/components/Confetti";
-import { StreakBadge } from "@/components/StreakBadge";
 import { useAppStore } from "@/store/appStore";
 import { useFlashcards } from "@/hooks/useFlashcards";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
@@ -271,9 +270,6 @@ const FlashcardsPage = () => {
               )}
             </nav>
           </div>
-          <div className="flex items-center gap-3">
-            {user && <StreakBadge />}
-          </div>
         </header>
         <main className="flex-1 flex items-center justify-center px-6 py-8" role="main">
           <div className="w-full max-w-lg">
@@ -431,12 +427,9 @@ const FlashcardsPage = () => {
             </Link>
           </nav>
         </div>
-        <div className="flex items-center gap-3">
-          {user && <StreakBadge />}
-          <span className="text-caption font-medium text-muted-foreground" aria-live="polite">
-            {progress} of {flashcards.length}
-          </span>
-        </div>
+        <span className="text-caption font-medium text-muted-foreground" aria-live="polite">
+          {progress} of {flashcards.length}
+        </span>
       </header>
 
       {/* Progress Bar */}

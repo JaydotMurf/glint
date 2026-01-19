@@ -6,7 +6,6 @@ import { GlintButton } from "@/components/ui/glint-button";
 import { GlintCard } from "@/components/ui/glint-card";
 import { GlintTabs } from "@/components/ui/glint-tabs";
 import { UpgradeModal } from "@/components/UpgradeModal";
-import { StreakBadge } from "@/components/StreakBadge";
 import { useAppStore } from "@/store/appStore";
 import { useSavedConcepts } from "@/hooks/useSavedConcepts";
 import { useUsageLimit } from "@/hooks/useUsageLimit";
@@ -115,9 +114,8 @@ const ResultsPage = () => {
           </nav>
         </div>
         
-        {/* Streak Badge + Save Button */}
-        <div className="flex items-center gap-3">
-          {user && <StreakBadge />}
+        {/* Save Button */}
+        <div className="flex items-center gap-2">
           <GlintButton
             variant={isSaved ? "ghost" : "secondary"}
             size="sm"
