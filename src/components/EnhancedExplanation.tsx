@@ -69,9 +69,9 @@ const EnhancedExplanation = React.forwardRef<HTMLDivElement, EnhancedExplanation
           </div>
         )}
 
-        {/* Remainder */}
-        {parsed.remainder && (
-          <div className={cn("text-reading", hasStructuredContent ? "mb-6" : "mt-4")}> 
+        {/* Remainder - only show if we had structured steps */}
+        {hasStructuredContent && parsed.remainder && (
+          <div className="text-reading mb-6">
             <ReactMarkdown>{parsed.remainder}</ReactMarkdown>
           </div>
         )}
