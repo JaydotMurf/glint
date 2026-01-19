@@ -88,9 +88,27 @@ serve(async (req) => {
   try {
     const { topic, explanation } = await req.json();
 
+    // Input validation
+    const MAX_TOPIC_LENGTH = 2000;
+    const MAX_EXPLANATION_LENGTH = 5000;
+
     if (!topic || typeof topic !== 'string') {
       return new Response(
         JSON.stringify({ error: "Topic is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (topic.length > MAX_TOPIC_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Topic must be ${MAX_TOPIC_LENGTH} characters or less` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (explanation && typeof explanation === 'string' && explanation.length > MAX_EXPLANATION_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Explanation must be ${MAX_EXPLANATION_LENGTH} characters or less` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

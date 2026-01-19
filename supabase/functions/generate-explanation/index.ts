@@ -153,9 +153,19 @@ serve(async (req) => {
   try {
     const { topic } = await req.json();
     
+    // Input validation
+    const MAX_TOPIC_LENGTH = 2000;
+    
     if (!topic || typeof topic !== 'string') {
       return new Response(
         JSON.stringify({ error: "Topic is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (topic.length > MAX_TOPIC_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Topic must be ${MAX_TOPIC_LENGTH} characters or less` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
