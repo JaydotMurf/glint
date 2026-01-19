@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { GlintButton } from "@/components/ui/glint-button";
 import { GlintTabs } from "@/components/ui/glint-tabs";
@@ -28,7 +29,7 @@ const ResultsPage = () => {
   const { currentConcept, setCurrentConcept, savedConceptId, setSavedConceptId } = useAppStore();
   const { concepts, saveConcept } = useSavedConcepts();
   const { isPremium } = useUsageLimit();
-  const [activeLevel, setActiveLevel] = useState<ExplanationLevel>("standard");
+  const [activeLevel, setActiveLevel] = useState<ExplanationLevel>("simplest");
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   if (!currentConcept) {
@@ -162,12 +163,22 @@ const ResultsPage = () => {
             />
           </div>
 
-          {/* Enhanced Explanation Display */}
-          <EnhancedExplanation
-            level={activeLevel}
-            content={currentConcept.explanations[activeLevel]}
-            className="mb-8 animate-fade-in"
-          />
+          {/* Enhanced Explanation Display with Tab Transitions */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeLevel}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+            >
+              <EnhancedExplanation
+                level={activeLevel}
+                content={currentConcept.explanations[activeLevel]}
+                className="mb-8"
+              />
+            </motion.div>
+          </AnimatePresence>
 
           {/* Helper Text */}
           <p className="text-center text-caption text-muted-foreground mb-8">
